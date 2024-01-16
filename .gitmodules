@@ -1,4 +1,4 @@
 [submodule "core-lib"]
 	path = core-lib
-	url = https://github.com/SOM-st/SOM.git
+	url = https://github.com/josrepo/SOM.git
 	ignore = untracked
