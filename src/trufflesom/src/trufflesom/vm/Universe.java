@@ -40,6 +40,7 @@ import static trufflesom.vm.Classes.primitiveClass;
 import static trufflesom.vm.Classes.stringClass;
 import static trufflesom.vm.Classes.symbolClass;
 import static trufflesom.vm.Classes.trueClass;
+import static trufflesom.vm.Classes.vectorClass;
 import static trufflesom.vm.Globals.getGlobal;
 import static trufflesom.vm.Globals.setGlobal;
 import static trufflesom.vm.SymbolTable.symNil;
@@ -329,6 +330,7 @@ public final class Universe {
     initializeSystemClass(metaclassClass, classClass, "Metaclass");
     initializeSystemClass(nilClass, objectClass, "Nil");
     initializeSystemClass(arrayClass, objectClass, "Array");
+    initializeSystemClass(vectorClass, objectClass, "Vector");
     initializeSystemClass(methodClass, objectClass, "Method");
     initializeSystemClass(stringClass, objectClass, "String");
     initializeSystemClass(symbolClass, stringClass, "Symbol");
@@ -346,6 +348,7 @@ public final class Universe {
     loadSystemClass(metaclassClass);
     loadSystemClass(nilClass);
     loadSystemClass(arrayClass);
+    loadSystemClass(vectorClass);
     loadSystemClass(methodClass);
     loadSystemClass(stringClass);
     loadSystemClass(symbolClass);

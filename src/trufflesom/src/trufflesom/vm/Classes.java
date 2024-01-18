@@ -16,6 +16,7 @@ public class Classes {
   public static final SClass nilClass;
   public static final SClass integerClass;
   public static final SClass arrayClass;
+  public static final SClass vectorClass;
   public static final SClass methodClass;
   public static final SClass symbolClass;
   public static final SClass primitiveClass;
@@ -40,6 +41,7 @@ public class Classes {
     nilClass = newSystemClass();
     classClass = newSystemClass();
     arrayClass = newSystemClass();
+    vectorClass = newSystemClass();
     symbolClass = newSystemClass();
     methodClass = newSystemClass();
     integerClass = newSystemClass();
@@ -90,6 +92,7 @@ public class Classes {
     nilClass.resetSystemClass();
     classClass.resetSystemClass();
     arrayClass.resetSystemClass();
+    vectorClass.resetSystemClass();
     symbolClass.resetSystemClass();
     methodClass.resetSystemClass();
     integerClass.resetSystemClass();
