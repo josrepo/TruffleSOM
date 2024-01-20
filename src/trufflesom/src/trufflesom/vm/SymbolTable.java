@@ -22,7 +22,6 @@ public class SymbolTable {
   public static final SSymbol symObject;
   public static final SSymbol symArray;
   public static final SSymbol symNewMsg;
-  public static final SSymbol symInitMsg;
   public static final SSymbol symAtPutMsg;
   public static final SSymbol symArraySizePlaceholder;
 
@@ -65,7 +64,6 @@ public class SymbolTable {
     symObject = symbolFor("Object");
     symArray = symbolFor("Array");
     symNewMsg = symbolFor("new:");
-    symInitMsg = symbolFor("initialize:");
     symAtPutMsg = symbolFor("at:put:");
     symArraySizePlaceholder = symbolFor("ArraySizeLiteralPlaceholder");
 

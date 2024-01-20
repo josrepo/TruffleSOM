@@ -90,7 +90,6 @@ import trufflesom.primitives.arrays.AtPutPrimFactory;
 import trufflesom.primitives.arrays.CopyPrimFactory;
 import trufflesom.primitives.arrays.DoIndexesPrimFactory;
 import trufflesom.primitives.arrays.DoPrimFactory;
-import trufflesom.primitives.arrays.NewPrimFactory;
 import trufflesom.primitives.arrays.PutAllNodeFactory;
 import trufflesom.primitives.basics.AsStringPrimFactory;
 import trufflesom.primitives.basics.BlockPrimsFactory;
@@ -100,6 +99,7 @@ import trufflesom.primitives.basics.EqualsPrimFactory;
 import trufflesom.primitives.basics.HashPrimFactory;
 import trufflesom.primitives.basics.IntegerPrimsFactory;
 import trufflesom.primitives.basics.LengthPrimFactory;
+import trufflesom.primitives.basics.NewPrimFactory;
 import trufflesom.primitives.basics.NewObjectPrimFactory;
 import trufflesom.primitives.basics.StringPrimsFactory;
 import trufflesom.primitives.basics.SystemPrimsFactory;
@@ -271,7 +271,6 @@ public final class Primitives extends PrimitiveLoader<ExpressionNode, SSymbol> {
     add(allFactories, CopyPrimFactory.getInstance());
     add(allFactories, DoIndexesPrimFactory.getInstance());
     add(allFactories, DoPrimFactory.getInstance());
-    add(allFactories, NewPrimFactory.getInstance());
     add(allFactories, PutAllNodeFactory.getInstance());
 
     add(allFactories, AsStringPrimFactory.getInstance());
@@ -280,6 +279,7 @@ public final class Primitives extends PrimitiveLoader<ExpressionNode, SSymbol> {
     add(allFactories, EqualsPrimFactory.getInstance());
     add(allFactories, HashPrimFactory.getInstance());
     add(allFactories, LengthPrimFactory.getInstance());
+    add(allFactories, NewPrimFactory.getInstance());
     add(allFactories, NewObjectPrimFactory.getInstance());
     add(allFactories, UnequalsPrimFactory.getInstance());
 
