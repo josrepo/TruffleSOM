@@ -78,6 +78,10 @@ public class SVector extends SObject {
     return last - first;
   }
 
+  public boolean isEmpty() {
+    return last == first;
+  }
+
   public void setStorage(final Object storage) {
     this.storage = storage;
   }
