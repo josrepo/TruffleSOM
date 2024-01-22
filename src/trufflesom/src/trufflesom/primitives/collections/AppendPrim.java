@@ -1,4 +1,4 @@
-package trufflesom.primitives.vectors;
+package trufflesom.primitives.collections;
 
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
@@ -21,10 +21,10 @@ public abstract class AppendPrim extends BinaryMsgExprNode {
       final Object[] newStorage = new Object[storage.length * 2];
       System.arraycopy(storage, 0, newStorage, 0, storage.length);
       storage = newStorage;
+      receiver.setStorage(newStorage);
     }
 
     storage[receiver.getLastIndex() - 1] = value;
-    receiver.setStorage(storage);
     receiver.incrementLastIndex();
 
     return receiver;

@@ -1,4 +1,4 @@
-package trufflesom.primitives.arrays;
+package trufflesom.primitives.collections;
 
 import java.util.Arrays;
 
@@ -10,11 +10,13 @@ import trufflesom.interpreter.nodes.nary.TernaryExpressionNode;
 import trufflesom.vm.constants.Nil;
 import trufflesom.vmobjects.SArray;
 import trufflesom.vmobjects.SArray.PartiallyEmptyArray;
+import trufflesom.vmobjects.SVector;
 
 
 @GenerateNodeFactory
-@Primitive(className = "Array", primitive = "at:put:", selector = "at:put:",
-    receiverType = SArray.class, inParser = false)
+@Primitive(className = "Array", primitive = "at:put:")
+@Primitive(className = "Vector", primitive = "at:put:")
+@Primitive(selector = "at:put:", receiverType = {SArray.class, SVector.class}, inParser = false)
 public abstract class AtPutPrim extends TernaryExpressionNode {
 
   protected static final boolean valueIsNil(final Object value) {
@@ -223,6 +225,16 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
     }
 
     return transitionAndSet(receiver, index, value, newStorage);
+  }
+
+  // FIXME: do error send if index out of bounds
+
+  @Specialization(guards = "receiver.isObjectType()")
+  public static final Object doObjectSVector(final SVector receiver, final long index,
+      final Object value) {
+    long storeIndex = index + receiver.getFirstIndex() - 1;
+    receiver.getObjectStorage()[(int) storeIndex - 1] = value;
+    return value;
   }
 
   private static Object transitionAndSet(final SArray receiver, final long index,

@@ -74,6 +74,10 @@ public class SVector extends SObject {
     return last;
   }
 
+  public int getSize() {
+    return last - first;
+  }
+
   public void setStorage(final Object storage) {
     this.storage = storage;
   }

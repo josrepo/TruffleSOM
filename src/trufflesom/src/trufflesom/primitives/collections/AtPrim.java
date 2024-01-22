@@ -1,4 +1,4 @@
-package trufflesom.primitives.basics;
+package trufflesom.primitives.collections;
 
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;

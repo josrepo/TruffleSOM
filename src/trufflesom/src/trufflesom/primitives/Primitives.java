@@ -85,12 +85,10 @@ import trufflesom.primitives.arithmetic.RemainderPrimFactory;
 import trufflesom.primitives.arithmetic.SinPrimFactory;
 import trufflesom.primitives.arithmetic.SqrtPrimFactory;
 import trufflesom.primitives.arithmetic.SubtractionPrimFactory;
-import trufflesom.primitives.arrays.AtPutPrimFactory;
 import trufflesom.primitives.arrays.CopyPrimFactory;
 import trufflesom.primitives.arrays.DoIndexesPrimFactory;
 import trufflesom.primitives.arrays.DoPrimFactory;
 import trufflesom.primitives.arrays.PutAllNodeFactory;
-import trufflesom.primitives.basics.AtPrimFactory;
 import trufflesom.primitives.basics.AsStringPrimFactory;
 import trufflesom.primitives.basics.BlockPrimsFactory;
 import trufflesom.primitives.basics.DoublePrimsFactory;
@@ -99,12 +97,18 @@ import trufflesom.primitives.basics.EqualsPrimFactory;
 import trufflesom.primitives.basics.HashPrimFactory;
 import trufflesom.primitives.basics.IntegerPrimsFactory;
 import trufflesom.primitives.basics.LengthPrimFactory;
-import trufflesom.primitives.basics.NewPrimFactory;
 import trufflesom.primitives.basics.NewObjectPrimFactory;
 import trufflesom.primitives.basics.StringPrimsFactory;
 import trufflesom.primitives.basics.SystemPrimsFactory;
 import trufflesom.primitives.basics.UnequalUnequalPrimFactory;
 import trufflesom.primitives.basics.UnequalsPrimFactory;
+import trufflesom.primitives.collections.AppendPrimFactory;
+import trufflesom.primitives.collections.AtPrimFactory;
+import trufflesom.primitives.collections.AtPutPrimFactory;
+import trufflesom.primitives.collections.FirstPrimFactory;
+import trufflesom.primitives.collections.RemoveLastPrimFactory;
+import trufflesom.primitives.collections.LastPrimFactory;
+import trufflesom.primitives.collections.NewPrimFactory;
 import trufflesom.primitives.reflection.ClassPrimsFactory;
 import trufflesom.primitives.reflection.GlobalPrimFactory;
 import trufflesom.primitives.reflection.HasGlobalPrimFactory;
@@ -115,7 +119,6 @@ import trufflesom.primitives.reflection.PerformInSuperclassPrimFactory;
 import trufflesom.primitives.reflection.PerformPrimFactory;
 import trufflesom.primitives.reflection.PerformWithArgumentsInSuperclassPrimFactory;
 import trufflesom.primitives.reflection.PerformWithArgumentsPrimFactory;
-import trufflesom.primitives.vectors.AppendPrimFactory;
 import trufflesom.vm.SymbolTable;
 import trufflesom.vm.Universe;
 import trufflesom.vmobjects.SClass;
@@ -267,22 +270,27 @@ public final class Primitives extends PrimitiveLoader<ExpressionNode, SSymbol> {
     add(allFactories, SqrtPrimFactory.getInstance());
     add(allFactories, SubtractionPrimFactory.getInstance());
 
-    add(allFactories, AtPutPrimFactory.getInstance());
     add(allFactories, CopyPrimFactory.getInstance());
     add(allFactories, DoIndexesPrimFactory.getInstance());
     add(allFactories, DoPrimFactory.getInstance());
     add(allFactories, PutAllNodeFactory.getInstance());
 
     add(allFactories, AsStringPrimFactory.getInstance());
-    add(allFactories, AtPrimFactory.getInstance());
     add(allFactories, EqualsEqualsPrimFactory.getInstance());
     add(allFactories, UnequalUnequalPrimFactory.getInstance());
     add(allFactories, EqualsPrimFactory.getInstance());
     add(allFactories, HashPrimFactory.getInstance());
     add(allFactories, LengthPrimFactory.getInstance());
-    add(allFactories, NewPrimFactory.getInstance());
     add(allFactories, NewObjectPrimFactory.getInstance());
     add(allFactories, UnequalsPrimFactory.getInstance());
+
+    add(allFactories, AppendPrimFactory.getInstance());
+    add(allFactories, AtPrimFactory.getInstance());
+    add(allFactories, AtPutPrimFactory.getInstance());
+    add(allFactories, FirstPrimFactory.getInstance());
+    add(allFactories, RemoveLastPrimFactory.getInstance());
+    add(allFactories, LastPrimFactory.getInstance());
+    add(allFactories, NewPrimFactory.getInstance());
 
     add(allFactories, AndMessageNodeFactory.getInstance());
     add(allFactories, AndBoolMessageNodeFactory.getInstance());
@@ -306,8 +314,6 @@ public final class Primitives extends PrimitiveLoader<ExpressionNode, SSymbol> {
     add(allFactories, WhileFalsePrimitiveNodeFactory.getInstance());
     add(allFactories, IfTrueMessageNodeFactory.getInstance());
     add(allFactories, IfFalseMessageNodeFactory.getInstance());
-
-    add(allFactories, AppendPrimFactory.getInstance());
 
     return allFactories;
   }
