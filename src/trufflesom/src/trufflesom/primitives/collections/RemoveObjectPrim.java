@@ -19,8 +19,7 @@ public abstract class RemoveObjectPrim extends BinaryMsgExprNode {
     int newLast = 1;
     boolean found = false;
 
-    int lastElement = receiver.getLastIndex() - 2;
-    for (int i = receiver.getFirstIndex() - 1; i < lastElement; i++) {
+    for (int i = receiver.getFirstIndex() - 1; i < receiver.getLastIndex(); i++) {
       if (storage[i] == value) {
         found = true;
       } else {
