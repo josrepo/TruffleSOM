@@ -11,7 +11,7 @@ import trufflesom.vmobjects.SVector;
 public abstract class CapacityPrim extends UnaryExpressionNode {
 
   @Specialization(guards = "!receiver.isEmptyType()")
-  public static final long doObjectSVector(final SVector receiver) {
+  public static final long doNonEmptySVector(final SVector receiver) {
     return receiver.getObjectStorage().length;
   }
 
