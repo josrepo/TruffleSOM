@@ -107,6 +107,7 @@ import trufflesom.primitives.collections.AtPrimFactory;
 import trufflesom.primitives.collections.AtPutPrimFactory;
 import trufflesom.primitives.collections.FirstPrimFactory;
 import trufflesom.primitives.collections.RemoveLastPrimFactory;
+import trufflesom.primitives.collections.RemoveObjectPrimFactory;
 import trufflesom.primitives.collections.LastPrimFactory;
 import trufflesom.primitives.collections.NewPrimFactory;
 import trufflesom.primitives.reflection.ClassPrimsFactory;
@@ -289,6 +290,7 @@ public final class Primitives extends PrimitiveLoader<ExpressionNode, SSymbol> {
     add(allFactories, AtPutPrimFactory.getInstance());
     add(allFactories, FirstPrimFactory.getInstance());
     add(allFactories, RemoveLastPrimFactory.getInstance());
+    add(allFactories, RemoveObjectPrimFactory.getInstance());
     add(allFactories, LastPrimFactory.getInstance());
     add(allFactories, NewPrimFactory.getInstance());
 
