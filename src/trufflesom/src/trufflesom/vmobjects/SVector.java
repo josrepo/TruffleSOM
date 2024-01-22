@@ -6,6 +6,7 @@ import trufflesom.vm.Classes;
 public class SVector extends SObject {
 
   private Object storage;
+  private int first, last;
 
   /**
    * Create an empty vector, using the empty strategy.
@@ -14,7 +15,10 @@ public class SVector extends SObject {
    */
   public SVector(final long length) {
     super(Classes.vectorClass, Classes.vectorClass.getLayoutForInstances());
-    storage = (int) length;
+    // FIXME:
+//    storage = (int) length;
+    storage = new Object[(int) length];
+    first = last = 1;
   }
 
   public boolean isEmptyType() {
@@ -60,6 +64,38 @@ public class SVector extends SObject {
   public boolean[] getBooleanStorage() {
     assert isBooleanType();
     return (boolean[]) storage;
+  }
+
+  public int getFirstIndex() {
+    return first;
+  }
+
+  public int getLastIndex() {
+    return last;
+  }
+
+  public void setStorage(final Object storage) {
+    this.storage = storage;
+  }
+
+  public void setLastIndex(final int last) {
+    this.last = last;
+  }
+
+  public void incrementLastIndex() {
+    last++;
+  }
+
+  public void decrementLastIndex() {
+    last--;
+  }
+
+  public void resetFirstIndex() {
+    first = 1;
+  }
+
+  public void incrementFirstIndex() {
+    first++;
   }
 
 }
