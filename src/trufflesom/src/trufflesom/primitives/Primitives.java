@@ -86,8 +86,6 @@ import trufflesom.primitives.arithmetic.SinPrimFactory;
 import trufflesom.primitives.arithmetic.SqrtPrimFactory;
 import trufflesom.primitives.arithmetic.SubtractionPrimFactory;
 import trufflesom.primitives.arrays.CopyPrimFactory;
-import trufflesom.primitives.arrays.DoIndexesPrimFactory;
-import trufflesom.primitives.arrays.DoPrimFactory;
 import trufflesom.primitives.arrays.PutAllNodeFactory;
 import trufflesom.primitives.basics.AsStringPrimFactory;
 import trufflesom.primitives.basics.BlockPrimsFactory;
@@ -105,6 +103,8 @@ import trufflesom.primitives.basics.UnequalsPrimFactory;
 import trufflesom.primitives.collections.AppendPrimFactory;
 import trufflesom.primitives.collections.AtPrimFactory;
 import trufflesom.primitives.collections.AtPutPrimFactory;
+import trufflesom.primitives.collections.DoIndexesPrimFactory;
+import trufflesom.primitives.collections.DoPrimFactory;
 import trufflesom.primitives.collections.CapacityPrimFactory;
 import trufflesom.primitives.collections.ContainsPrimFactory;
 import trufflesom.primitives.collections.FirstPrimFactory;
@@ -277,8 +277,6 @@ public final class Primitives extends PrimitiveLoader<ExpressionNode, SSymbol> {
     add(allFactories, SubtractionPrimFactory.getInstance());
 
     add(allFactories, CopyPrimFactory.getInstance());
-    add(allFactories, DoIndexesPrimFactory.getInstance());
-    add(allFactories, DoPrimFactory.getInstance());
     add(allFactories, PutAllNodeFactory.getInstance());
 
     add(allFactories, AsStringPrimFactory.getInstance());
@@ -295,6 +293,8 @@ public final class Primitives extends PrimitiveLoader<ExpressionNode, SSymbol> {
     add(allFactories, AtPutPrimFactory.getInstance());
     add(allFactories, CapacityPrimFactory.getInstance());
     add(allFactories, ContainsPrimFactory.getInstance());
+    add(allFactories, DoIndexesPrimFactory.getInstance());
+    add(allFactories, DoPrimFactory.getInstance());
     add(allFactories, FirstPrimFactory.getInstance());
     add(allFactories, IndexOfPrimFactory.getInstance());
     add(allFactories, IsEmptyPrimFactory.getInstance());

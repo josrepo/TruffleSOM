@@ -37,7 +37,7 @@ import trufflesom.interpreter.nodes.specialized.IntToDoInlinedLiteralsNode;
 import trufflesom.interpreter.nodes.specialized.whileloops.WhileInlinedLiteralsNode;
 import trufflesom.interpreter.supernodes.IntIncrementNode;
 import trufflesom.primitives.arithmetic.SubtractionPrim;
-import trufflesom.primitives.arrays.DoPrim;
+import trufflesom.primitives.collections.DoPrim;
 
 
 public class AstInliningTests extends AstTestSetup {

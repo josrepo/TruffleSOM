@@ -1,4 +1,4 @@
-package trufflesom.primitives.arrays;
+package trufflesom.primitives.collections;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
@@ -19,11 +19,13 @@ import trufflesom.vm.SymbolTable;
 import trufflesom.vmobjects.SArray;
 import trufflesom.vmobjects.SBlock;
 import trufflesom.vmobjects.SSymbol;
+import trufflesom.vmobjects.SVector;
 
 
 @GenerateNodeFactory
-@Primitive(className = "Array", primitive = "doIndexes:", selector = "doIndexes:",
-    receiverType = SArray.class, disabled = true)
+@Primitive(className = "Array", primitive = "doIndexes:")
+@Primitive(className = "Vector", primitive = "doIndexes:")
+@Primitive(selector = "doIndexes:", receiverType = {SArray.class, SVector.class}, disabled = true)
 public abstract class DoIndexesPrim extends BinaryMsgExprNode {
   @Child private ValueOnePrim block;
   @Child private LengthPrim   length;
@@ -46,11 +48,30 @@ public abstract class DoIndexesPrim extends BinaryMsgExprNode {
   public final SArray doArray(final VirtualFrame frame,
       final SArray receiver, final SBlock b) {
     int l = (int) this.length.executeEvaluated(frame, receiver);
-    loop(frame, b, l);
+    loopArray(frame, b, l);
     return receiver;
   }
 
-  private void loop(final VirtualFrame frame, final SBlock b, final int l) {
+  @Specialization
+  public final SVector doSVector(final VirtualFrame frame,
+      final SVector receiver, final SBlock b) {
+    int l = receiver.getSize();
+    try {
+      if (1 < l) {
+        this.block.executeEvaluated(frame, b, (long) 1);
+      }
+      for (long i = 2; i < l; i++) {
+        this.block.executeEvaluated(frame, b, i);
+      }
+    } finally {
+      if (CompilerDirectives.inInterpreter()) {
+        reportLoopCount(l);
+      }
+    }
+    return receiver;
+  }
+
+  private void loopArray(final VirtualFrame frame, final SBlock b, final int l) {
     try {
       assert SArray.FIRST_IDX == 0;
       if (SArray.FIRST_IDX < l) {

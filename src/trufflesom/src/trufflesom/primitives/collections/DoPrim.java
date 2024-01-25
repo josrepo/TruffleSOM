@@ -1,4 +1,4 @@
-package trufflesom.primitives.arrays;
+package trufflesom.primitives.collections;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
@@ -19,11 +19,13 @@ import trufflesom.vmobjects.SArray;
 import trufflesom.vmobjects.SArray.PartiallyEmptyArray;
 import trufflesom.vmobjects.SBlock;
 import trufflesom.vmobjects.SSymbol;
+import trufflesom.vmobjects.SVector;
 
 
 @GenerateNodeFactory
-@Primitive(className = "Array", primitive = "do:", selector = "do:",
-    receiverType = SArray.class, disabled = true)
+@Primitive(className = "Array", primitive = "do:")
+@Primitive(className = "Vector", primitive = "do:")
+@Primitive(selector = "do:", receiverType = {SArray.class, SVector.class}, disabled = true)
 public abstract class DoPrim extends BinaryMsgExprNode {
   @Child private ValueOnePrim block = ValueOnePrimFactory.create(null, null);
 
@@ -149,6 +151,27 @@ public abstract class DoPrim extends BinaryMsgExprNode {
       }
     }
     return arr;
+  }
+
+  @Specialization(guards = "vec.isObjectType()")
+  public final SVector doObjectSVector(final VirtualFrame frame,
+      final SVector vec, final SBlock b) {
+    Object[] storage = vec.getObjectStorage();
+    int first = vec.getFirstIndex();
+    int last = vec.getLastIndex();
+    try {
+      if (first < last) {
+        this.block.executeEvaluated(frame, b, storage[first]);
+      }
+      for (long i = first + 1; i < last; i++) {
+        this.block.executeEvaluated(frame, b, storage[(int) i]);
+      }
+    } finally {
+      if (CompilerDirectives.inInterpreter()) {
+        reportLoopCount(last);
+      }
+    }
+    return vec;
   }
 
   protected final void reportLoopCount(final long count) {
