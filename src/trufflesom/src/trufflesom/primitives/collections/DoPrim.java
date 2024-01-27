@@ -157,8 +157,8 @@ public abstract class DoPrim extends BinaryMsgExprNode {
   public final SVector doObjectSVector(final VirtualFrame frame,
       final SVector vec, final SBlock b) {
     Object[] storage = vec.getObjectStorage();
-    int first = vec.getFirstIndex();
-    int last = vec.getLastIndex();
+    int first = vec.getFirstIndex() - 1;
+    int last = vec.getLastIndex() - 1;
     try {
       if (first < last) {
         this.block.executeEvaluated(frame, b, storage[first]);
