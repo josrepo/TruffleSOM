@@ -116,6 +116,7 @@ import trufflesom.primitives.reflection.PerformPrimFactory;
 import trufflesom.primitives.reflection.PerformWithArgumentsInSuperclassPrimFactory;
 import trufflesom.primitives.reflection.PerformWithArgumentsPrimFactory;
 import trufflesom.primitives.vectors.AppendPrimFactory;
+import trufflesom.primitives.vectors.AsArrayPrimFactory;
 import trufflesom.primitives.vectors.CapacityPrimFactory;
 import trufflesom.primitives.vectors.ContainsPrimFactory;
 import trufflesom.primitives.vectors.FirstPrimFactory;
@@ -314,6 +315,7 @@ public final class Primitives extends PrimitiveLoader<ExpressionNode, SSymbol> {
     add(allFactories, PerformWithArgumentsPrimFactory.getInstance());
 
     add(allFactories, AppendPrimFactory.getInstance());
+    add(allFactories, AsArrayPrimFactory.getInstance());
     add(allFactories, CapacityPrimFactory.getInstance());
     add(allFactories, ContainsPrimFactory.getInstance());
     add(allFactories, FirstPrimFactory.getInstance());
