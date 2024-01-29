@@ -62,22 +62,22 @@ public abstract class AtPrim extends BinaryMsgExprNode {
 
   @Specialization(guards = "receiver.isObjectType()")
   public static final Object doObjectSVector(final SVector receiver, final long idx) {
-    return receiver.getObjectStorage()[(int) idx - 1];
+    return receiver.getObjectStorage()[receiver.getFirstIndex() + (int) idx - 2];
   }
 
   @Specialization(guards = "receiver.isLongType()")
   public static final long doLongSVector(final SVector receiver, final long idx) {
-    return receiver.getLongStorage()[(int) idx - 1];
+    return receiver.getLongStorage()[receiver.getFirstIndex() + (int) idx - 2];
   }
 
   @Specialization(guards = "receiver.isDoubleType()")
   public static final double doDoubleSVector(final SVector receiver, final long idx) {
-    return receiver.getDoubleStorage()[(int) idx - 1];
+    return receiver.getDoubleStorage()[receiver.getFirstIndex() + (int) idx - 2];
   }
 
   @Specialization(guards = "receiver.isBooleanType()")
   public static final boolean doBooleanSVector(final SVector receiver, final long idx) {
-    return receiver.getBooleanStorage()[(int) idx - 1];
+    return receiver.getBooleanStorage()[receiver.getFirstIndex() + (int) idx - 2];
   }
 
 }
