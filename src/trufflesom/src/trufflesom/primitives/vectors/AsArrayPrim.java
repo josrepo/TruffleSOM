@@ -14,7 +14,7 @@ import java.util.Arrays;
 public abstract class AsArrayPrim extends UnaryExpressionNode {
 
   @Specialization(guards = "receiver.isObjectType()")
-  public static final SArray doObjectSVector(final SVector receiver) {
+  public static final SArray doSVector(final SVector receiver) {
     return SArray.create(Arrays.copyOfRange(receiver.getObjectStorage(),
         receiver.getFirstIndex() - 1,
         receiver.getLastIndex() - 1));

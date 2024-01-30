@@ -11,6 +11,12 @@ import trufflesom.vmobjects.SVector;
 @Primitive(className = "Vector", primitive = "last", selector = "last", receiverType = SVector.class, inParser = false)
 public abstract class LastPrim extends UnaryExpressionNode {
 
+  @Specialization(guards = "receiver.isEmptyType")
+  @SuppressWarnings("unused")
+  public static final Object doEmptySVector(final SVector receiver) {
+    return Nil.nilObject;
+  }
+
   @Specialization(guards = "receiver.isObjectType()")
   public static final Object doObjectSVector(final SVector receiver) {
     if (receiver.getSize() > 0) {

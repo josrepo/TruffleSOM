@@ -11,7 +11,7 @@ import trufflesom.vmobjects.SVector;
 public abstract class IsEmptyPrim extends UnaryExpressionNode {
 
   @Specialization
-  public static final boolean doObjectSVector(final SVector receiver) {
+  public static final boolean doSVector(final SVector receiver) {
     return receiver.isEmpty();
   }
 

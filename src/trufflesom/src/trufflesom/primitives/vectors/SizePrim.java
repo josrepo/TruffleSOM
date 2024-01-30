@@ -11,7 +11,7 @@ import trufflesom.vmobjects.SVector;
 public abstract class SizePrim extends UnaryExpressionNode {
 
   @Specialization
-  public static final long doObjectSVector(final SVector receiver) {
+  public static final long doSVector(final SVector receiver) {
     return receiver.getSize();
   }
 
