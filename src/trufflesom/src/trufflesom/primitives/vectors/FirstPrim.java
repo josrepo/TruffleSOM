@@ -11,7 +11,7 @@ import trufflesom.vmobjects.SVector;
 @Primitive(className = "Vector", primitive = "first", selector = "first", receiverType = SVector.class, inParser = false)
 public abstract class FirstPrim extends UnaryExpressionNode {
 
-  @Specialization(guards = "receiver.isEmptyType")
+  @Specialization(guards = "receiver.isEmptyType()")
   @SuppressWarnings("unused")
   public static final Object doEmptySVector(final SVector receiver) {
     return Nil.nilObject;
