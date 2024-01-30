@@ -3,7 +3,9 @@ package trufflesom.primitives.collections;
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
 import trufflesom.bdt.primitives.Primitive;
+import trufflesom.interpreter.nodes.GenericMessageSendNode;
 import trufflesom.interpreter.nodes.nary.BinaryMsgExprNode;
 import trufflesom.vm.SymbolTable;
 import trufflesom.vm.constants.Nil;
@@ -53,31 +55,63 @@ public abstract class AtPrim extends BinaryMsgExprNode {
     return receiver.getBooleanStorage()[(int) idx - 1];
   }
 
-  // FIXME: Need to do error send if index is out of bounds
-
   @Specialization(guards = "receiver.isEmptyType()")
-  public static final Object doEmptySVector(final SVector receiver, final long idx) {
-    return Nil.nilObject;
+  public final Object doEmptySVector(final VirtualFrame frame, final SVector receiver, final long idx) {
+    final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      return Nil.nilObject;
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
   }
 
   @Specialization(guards = "receiver.isObjectType()")
-  public static final Object doObjectSVector(final SVector receiver, final long idx) {
-    return receiver.getObjectStorage()[receiver.getFirstIndex() + (int) idx - 2];
+  public final Object doObjectSVector(final VirtualFrame frame, final SVector receiver, final long idx) {
+    final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      return receiver.getObjectStorage()[storeIdx - 1];
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
   }
 
   @Specialization(guards = "receiver.isLongType()")
-  public static final long doLongSVector(final SVector receiver, final long idx) {
-    return receiver.getLongStorage()[receiver.getFirstIndex() + (int) idx - 2];
+  public final Object doLongSVector(final VirtualFrame frame, final SVector receiver, final long idx) {
+    final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      return receiver.getLongStorage()[storeIdx - 1];
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
   }
 
   @Specialization(guards = "receiver.isDoubleType()")
-  public static final double doDoubleSVector(final SVector receiver, final long idx) {
-    return receiver.getDoubleStorage()[receiver.getFirstIndex() + (int) idx - 2];
+  public final Object doDoubleSVector(final VirtualFrame frame, final SVector receiver, final long idx) {
+    final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      return receiver.getDoubleStorage()[storeIdx - 1];
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
   }
 
   @Specialization(guards = "receiver.isBooleanType()")
-  public static final boolean doBooleanSVector(final SVector receiver, final long idx) {
-    return receiver.getBooleanStorage()[receiver.getFirstIndex() + (int) idx - 2];
+  public final Object doBooleanSVector(final VirtualFrame frame, final SVector receiver, final long idx) {
+    final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      return receiver.getBooleanStorage()[storeIdx - 1];
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
+  }
+
+  private static boolean indexValid(final SVector vector, final int index) {
+    return vector.getFirstIndex() <= index && index < vector.getLastIndex();
+  }
+
+  private Object doInvalidIndexError(final VirtualFrame frame, final SVector receiver, final int index) {
+    return makeGenericSend(SymbolTable.symbolFor("error:")).doPreEvaluated(frame, new Object[]{receiver,
+        "Vector[" + receiver.getFirstIndex() + ".." + receiver.getLastIndex() + "]: Index " + index + " out of bounds"});
   }
 
 }
