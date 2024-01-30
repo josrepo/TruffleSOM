@@ -2,8 +2,10 @@ package trufflesom.primitives.vectors;
 
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import trufflesom.bdt.primitives.Primitive;
 import trufflesom.interpreter.nodes.nary.UnaryExpressionNode;
+import trufflesom.vm.SymbolTable;
 import trufflesom.vm.constants.Nil;
 import trufflesom.vmobjects.SVector;
 
@@ -11,10 +13,8 @@ import trufflesom.vmobjects.SVector;
 @Primitive(className = "Vector", primitive = "removeFirst", selector = "removeFirst", receiverType = SVector.class, inParser = false)
 public abstract class RemoveFirstPrim extends UnaryExpressionNode {
 
-  // FIXME: do error send if empty vector
-
   @Specialization(guards = "receiver.isObjectType()")
-  public static final Object doObjectSVector(final SVector receiver) {
+  public final Object doObjectSVector(final VirtualFrame frame, final SVector receiver) {
     if (receiver.getSize() > 0) {
       final Object[] storage = receiver.getObjectStorage();
       int first = receiver.getFirstIndex() - 1;
@@ -23,7 +23,8 @@ public abstract class RemoveFirstPrim extends UnaryExpressionNode {
       receiver.incrementFirstIndex();
       return value == null ? Nil.nilObject : value;
     } else {
-      return null;
+      return makeGenericSend(SymbolTable.symbolFor("error:"))
+          .doPreEvaluated(frame, new Object[] {receiver, "Vector: Attempting to remove the first element from an empty Vector"});
     }
   }
 
