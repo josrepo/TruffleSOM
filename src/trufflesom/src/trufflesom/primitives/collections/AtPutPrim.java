@@ -321,7 +321,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       Object[] newStorage = new Object[storage.length];
 
       for (int i = 0; i < storage.length; i++) {
-        newStorage[i] = storage[i] == SVector.EMPTY_LONG_SLOT ? Nil.nilObject : storage[i];
+        newStorage[i] = storage[i] == SVector.EMPTY_LONG_SLOT ? null : storage[i];
       }
 
       receiver.setStorage(newStorage);
@@ -353,7 +353,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       Object[] newStorage = new Object[storage.length];
 
       for (int i = 0; i < storage.length; i++) {
-        newStorage[i] = storage[i] == SVector.EMPTY_DOUBLE_SLOT ? Nil.nilObject : storage[i];
+        newStorage[i] = storage[i] == SVector.EMPTY_DOUBLE_SLOT ? null : storage[i];
       }
 
       receiver.setStorage(newStorage);
