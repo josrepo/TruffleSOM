@@ -34,7 +34,7 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
       int last = receiver.getLastIndex() - 1;
 
       for (int i = receiver.getFirstIndex() - 1; i < last; i++) {
-        if (this.equals.makeGenericSend(frame, storage[i], value).equals(true)) {
+        if (this.equals.executeEvaluated(frame, storage[i], value).equals(true)) {
           return true;
         }
       }

@@ -30,10 +30,10 @@ public abstract class IndexOfPrim extends BinaryMsgExprNode {
   public final long doObjectSVector(final VirtualFrame frame, final SVector receiver, final Object value) {
       final Object[] storage = receiver.getObjectStorage();
       int first = receiver.getFirstIndex();
-      int last = receiver.getLastIndex();
+      int last = receiver.getLastIndex() - 1;
 
       for (int i = first - 1; i < last; i++) {
-        if (this.equals.makeGenericSend(frame, storage[i], value).equals(true)) {
+        if (this.equals.executeEvaluated(frame, storage[i], value).equals(true)) {
           return i - first + 2;
         }
       }
