@@ -42,6 +42,48 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
     return false;
   }
 
+  @Specialization(guards = "receiver.isLongType()")
+  public final boolean doLongSVector(final VirtualFrame frame, final SVector receiver, final long value) {
+    final long[] storage = receiver.getLongStorage();
+    int last = receiver.getLastIndex() - 1;
+
+    for (int i = receiver.getFirstIndex() - 1; i < last; i++) {
+      if (storage[i] == value) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  @Specialization(guards = "receiver.isDoubleType()")
+  public final boolean doDoubleSVector(final VirtualFrame frame, final SVector receiver, final double value) {
+    final double[] storage = receiver.getDoubleStorage();
+    int last = receiver.getLastIndex() - 1;
+
+    for (int i = receiver.getFirstIndex() - 1; i < last; i++) {
+      if (storage[i] == value) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  @Specialization(guards = "receiver.isBooleanType()")
+  public final boolean doBooleanSVector(final VirtualFrame frame, final SVector receiver, final boolean value) {
+    final boolean[] storage = receiver.getBooleanStorage();
+    int last = receiver.getLastIndex() - 1;
+
+    for (int i = receiver.getFirstIndex() - 1; i < last; i++) {
+      if (storage[i] == value) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   @Override
   public SSymbol getSelector() {
     return SymbolTable.symbolFor("contains:");
