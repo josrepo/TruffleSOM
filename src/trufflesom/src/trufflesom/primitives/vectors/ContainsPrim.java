@@ -51,14 +51,14 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
 
   @Specialization(guards = "receiver.isObjectType()")
   public final boolean doObjectSVector(final VirtualFrame frame, final SVector receiver, final Object value) {
-      final Object[] storage = receiver.getObjectStorage();
-      int last = receiver.getLastIndex() - 1;
+    final Object[] storage = receiver.getObjectStorage();
+    int last = receiver.getLastIndex() - 1;
 
-      for (int i = receiver.getFirstIndex() - 1; i < last; i++) {
-        if (this.equals.executeEvaluated(frame, storage[i], value).equals(true)) {
-          return true;
-        }
+    for (int i = receiver.getFirstIndex() - 1; i < last; i++) {
+      if (this.equals.executeEvaluated(frame, storage[i], value).equals(true)) {
+        return true;
       }
+    }
 
     return false;
   }
