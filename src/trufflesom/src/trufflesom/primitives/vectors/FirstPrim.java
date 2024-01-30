@@ -20,4 +20,31 @@ public abstract class FirstPrim extends UnaryExpressionNode {
     }
   }
 
+  @Specialization(guards = "receiver.isLongType()")
+  public static final Object doLongSVector(final SVector receiver) {
+    if (receiver.getSize() > 0) {
+      return receiver.getLongStorage()[receiver.getFirstIndex() - 1];
+    } else {
+      return Nil.nilObject;
+    }
+  }
+
+  @Specialization(guards = "receiver.isDoubleType()")
+  public static final Object doDoubleSVector(final SVector receiver) {
+    if (receiver.getSize() > 0) {
+      return receiver.getDoubleStorage()[receiver.getFirstIndex() - 1];
+    } else {
+      return Nil.nilObject;
+    }
+  }
+
+  @Specialization(guards = "receiver.isBooleanType()")
+  public static final Object doBooleanSVector(final SVector receiver) {
+    if (receiver.getSize() > 0) {
+      return receiver.getBooleanStorage()[receiver.getFirstIndex() - 1];
+    } else {
+      return Nil.nilObject;
+    }
+  }
+
 }
