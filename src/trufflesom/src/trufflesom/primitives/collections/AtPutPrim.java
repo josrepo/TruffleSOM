@@ -5,8 +5,10 @@ import java.util.Arrays;
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
 import trufflesom.bdt.primitives.Primitive;
 import trufflesom.interpreter.nodes.nary.TernaryExpressionNode;
+import trufflesom.vm.SymbolTable;
 import trufflesom.vm.constants.Nil;
 import trufflesom.vmobjects.SArray;
 import trufflesom.vmobjects.SArray.PartiallyEmptyArray;
@@ -227,14 +229,25 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
     return transitionAndSet(receiver, index, value, newStorage);
   }
 
-  // FIXME: do error send if index out of bounds
-
   @Specialization(guards = "receiver.isObjectType()")
-  public static final Object doObjectSVector(final SVector receiver, final long index,
+  public final Object doObjectSVector(final VirtualFrame frame, final SVector receiver, final long index,
       final Object value) {
-    long storeIndex = index + receiver.getFirstIndex() - 1;
-    receiver.getObjectStorage()[(int) storeIndex - 1] = value;
-    return value;
+    final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      receiver.getObjectStorage()[storeIdx - 1] = value;
+      return value;
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
+  }
+
+  private static boolean indexValid(final SVector vector, final int index) {
+    return vector.getFirstIndex() <= index && index < vector.getLastIndex();
+  }
+
+  private Object doInvalidIndexError(final VirtualFrame frame, final SVector receiver, final int index) {
+    return makeGenericSend(SymbolTable.symbolFor("error:")).doPreEvaluated(frame, new Object[]{receiver,
+            "Vector[" + receiver.getFirstIndex() + ".." + receiver.getLastIndex() + "]: Index " + index + " out of bounds"});
   }
 
   private static Object transitionAndSet(final SArray receiver, final long index,
