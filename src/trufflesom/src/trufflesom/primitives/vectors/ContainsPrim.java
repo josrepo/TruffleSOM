@@ -64,6 +64,7 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
   }
 
   @Specialization(guards = "receiver.isLongType()")
+  @SuppressWarnings("unused")
   public final boolean doLongSVector(final VirtualFrame frame, final SVector receiver, final long value) {
     final long[] storage = receiver.getLongStorage();
     int last = receiver.getLastIndex() - 1;
@@ -78,6 +79,7 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
   }
 
   @Specialization(guards = "receiver.isDoubleType()")
+  @SuppressWarnings("unused")
   public final boolean doDoubleSVector(final VirtualFrame frame, final SVector receiver, final double value) {
     final double[] storage = receiver.getDoubleStorage();
     int last = receiver.getLastIndex() - 1;
@@ -92,6 +94,7 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
   }
 
   @Specialization(guards = "receiver.isBooleanType()")
+  @SuppressWarnings("unused")
   public final boolean doBooleanSVector(final VirtualFrame frame, final SVector receiver, final boolean value) {
     final boolean[] storage = receiver.getBooleanStorage();
     int last = receiver.getLastIndex() - 1;
