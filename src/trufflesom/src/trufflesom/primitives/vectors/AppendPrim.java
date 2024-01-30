@@ -67,23 +67,6 @@ public abstract class AppendPrim extends BinaryMsgExprNode {
     return receiver;
   }
 
-  @Specialization(guards = "receiver.isEmptyType()")
-  public static final SVector doEmptySVector(final SVector receiver, final boolean value) {
-    int capacity = receiver.getEmptyStorage();
-
-    if (receiver.getLastIndex() > capacity) {
-      capacity *= 2;
-    }
-
-    boolean[] newStorage = new boolean[capacity];
-    receiver.setStorage(newStorage);
-
-    newStorage[receiver.getLastIndex() - 1] = value;
-    receiver.incrementLastIndex();
-
-    return receiver;
-  }
-
   @Specialization(guards = {"receiver.isEmptyType()", "valueIsNotNil(value)", "valueNotLongDouble(value)"})
   public static final SVector doEmptySVector(final SVector receiver, final Object value) {
     int capacity = receiver.getEmptyStorage();
