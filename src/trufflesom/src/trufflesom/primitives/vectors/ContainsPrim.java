@@ -11,6 +11,7 @@ import trufflesom.primitives.basics.EqualsPrim;
 import trufflesom.primitives.basics.EqualsPrimFactory;
 import trufflesom.primitives.basics.LengthPrimFactory;
 import trufflesom.vm.SymbolTable;
+import trufflesom.vm.constants.Nil;
 import trufflesom.vmobjects.SSymbol;
 import trufflesom.vmobjects.SVector;
 
@@ -20,12 +21,32 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
 
   @Child private EqualsPrim equals;
 
+  protected static final boolean valueIsNil(final Object value) {
+    return value == Nil.nilObject;
+  }
+
+  protected static final boolean valueIsNotNil(final Object value) {
+    return value != Nil.nilObject;
+  }
+
   @Override
   @SuppressWarnings("unchecked")
   public <T extends Node> T initialize(final long coord) {
     super.initialize(coord);
     equals = EqualsPrimFactory.create(null, null);
     return (T) this;
+  }
+
+  @Specialization(guards = {"receiver.isEmptyType()", "valueIsNotNil(value)"})
+  @SuppressWarnings("unused")
+  public final boolean doEmptySVector(final VirtualFrame frame, final SVector receiver, final Object value) {
+    return false;
+  }
+
+  @Specialization(guards = {"receiver.isEmptyType()", "valueIsNil(value)"})
+  @SuppressWarnings("unused")
+  public final boolean doEmptySVectorWithNil(final VirtualFrame frame, final SVector receiver, final Object value) {
+    return true;
   }
 
   @Specialization(guards = "receiver.isObjectType()")
