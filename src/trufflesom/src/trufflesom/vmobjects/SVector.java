@@ -8,6 +8,9 @@ public class SVector extends SObject {
   private Object storage;
   private int first, last;
 
+  public static final long EMPTY_LONG_SLOT = Long.MIN_VALUE + 3L;
+  public static final double EMPTY_DOUBLE_SLOT = Double.MIN_VALUE + 3.0;
+
   /**
    * Create an empty vector, using the empty strategy.
    *
@@ -15,9 +18,7 @@ public class SVector extends SObject {
    */
   public SVector(final long length) {
     super(Classes.vectorClass, Classes.vectorClass.getLayoutForInstances());
-    // FIXME:
-//    storage = (int) length;
-    storage = new Object[(int) length];
+    storage = (int) length;
     first = last = 1;
   }
 
@@ -35,10 +36,6 @@ public class SVector extends SObject {
 
   public boolean isDoubleType() {
     return storage.getClass() == double[].class;
-  }
-
-  public boolean isBooleanType() {
-    return storage.getClass() == boolean[].class;
   }
 
   public int getEmptyStorage() {
@@ -59,11 +56,6 @@ public class SVector extends SObject {
   public double[] getDoubleStorage() {
     assert isDoubleType();
     return (double[]) storage;
-  }
-
-  public boolean[] getBooleanStorage() {
-    assert isBooleanType();
-    return (boolean[]) storage;
   }
 
   public int getFirstIndex() {

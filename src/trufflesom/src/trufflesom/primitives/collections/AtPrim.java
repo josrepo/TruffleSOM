@@ -50,11 +50,6 @@ public abstract class AtPrim extends BinaryMsgExprNode {
     return receiver.getDoubleStorage()[(int) idx - 1];
   }
 
-  @Specialization(guards = "receiver.isBooleanType()")
-  public static final boolean doBooleanSArray(final SArray receiver, final long idx) {
-    return receiver.getBooleanStorage()[(int) idx - 1];
-  }
-
   @Specialization(guards = "receiver.isEmptyType()")
   public final Object doEmptySVector(final VirtualFrame frame, final SVector receiver, final long idx) {
     final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
@@ -90,16 +85,6 @@ public abstract class AtPrim extends BinaryMsgExprNode {
     final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       return receiver.getDoubleStorage()[storeIdx - 1];
-    } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
-    }
-  }
-
-  @Specialization(guards = "receiver.isBooleanType()")
-  public final Object doBooleanSVector(final VirtualFrame frame, final SVector receiver, final long idx) {
-    final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
-    if (indexValid(receiver, storeIdx)) {
-      return receiver.getBooleanStorage()[storeIdx - 1];
     } else {
       return doInvalidIndexError(frame, receiver, storeIdx);
     }

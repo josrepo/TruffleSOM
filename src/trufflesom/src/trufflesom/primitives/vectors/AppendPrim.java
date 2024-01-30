@@ -29,14 +29,8 @@ public abstract class AppendPrim extends BinaryMsgExprNode {
     return !(value instanceof Double);
   }
 
-  protected static final boolean valueIsNotBoolean(final Object value) {
-    return !(value instanceof Boolean);
-  }
-
-  protected static final boolean valueNotLongDoubleBoolean(final Object value) {
-    return !(value instanceof Long) &&
-        !(value instanceof Double) &&
-        !(value instanceof Boolean);
+  protected static final boolean valueNotLongDouble(final Object value) {
+    return !(value instanceof Long) && !(value instanceof Double);
   }
 
   @Specialization(guards = "receiver.isEmptyType()")
@@ -90,7 +84,7 @@ public abstract class AppendPrim extends BinaryMsgExprNode {
     return receiver;
   }
 
-  @Specialization(guards = {"receiver.isEmptyType()", "valueIsNotNil(value)", "valueNotLongDoubleBoolean(value)"})
+  @Specialization(guards = {"receiver.isEmptyType()", "valueIsNotNil(value)", "valueNotLongDouble(value)"})
   public static final SVector doEmptySVector(final SVector receiver, final Object value) {
     int capacity = receiver.getEmptyStorage();
 
@@ -194,42 +188,6 @@ public abstract class AppendPrim extends BinaryMsgExprNode {
   @Specialization(guards = {"receiver.isDoubleType()", "valueIsNotDouble(value)"})
   public static final SVector doDoubleSVector(final SVector receiver, final Object value) {
     double[] storage = receiver.getDoubleStorage();
-    Object[] newStorage;
-
-    if (receiver.getLastIndex() > storage.length) {
-      newStorage = new Object[storage.length * 2];
-    } else {
-      newStorage = new Object[storage.length];
-    }
-
-    System.arraycopy(storage, 0, newStorage, 0, storage.length);
-    receiver.setStorage(newStorage);
-    newStorage[receiver.getLastIndex() - 1] = value;
-    receiver.incrementLastIndex();
-
-    return receiver;
-  }
-
-  @Specialization(guards = "receiver.isBooleanType()")
-  public static final SVector doBooleanSVector(final SVector receiver, final boolean value) {
-    boolean[] storage = receiver.getBooleanStorage();
-
-    if (receiver.getLastIndex() > storage.length) {
-      final boolean[] newStorage = new boolean[storage.length * 2];
-      System.arraycopy(storage, 0, newStorage, 0, storage.length);
-      storage = newStorage;
-      receiver.setStorage(newStorage);
-    }
-
-    storage[receiver.getLastIndex() - 1] = value;
-    receiver.incrementLastIndex();
-
-    return receiver;
-  }
-
-  @Specialization(guards = {"receiver.isBooleanType()", "valueIsNotBoolean(value)"})
-  public static final SVector doBooleanSVector(final SVector receiver, final Object value) {
-    boolean[] storage = receiver.getBooleanStorage();
     Object[] newStorage;
 
     if (receiver.getLastIndex() > storage.length) {

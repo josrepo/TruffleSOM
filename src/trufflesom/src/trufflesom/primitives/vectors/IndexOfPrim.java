@@ -94,22 +94,6 @@ public abstract class IndexOfPrim extends BinaryMsgExprNode {
     return -1;
   }
 
-  @Specialization(guards = "receiver.isBooleanType()")
-  @SuppressWarnings("unused")
-  public final long doBooleanSVector(final VirtualFrame frame, final SVector receiver, final boolean value) {
-    final boolean[] storage = receiver.getBooleanStorage();
-    int first = receiver.getFirstIndex();
-    int last = receiver.getLastIndex() - 1;
-
-    for (int i = first - 1; i < last; i++) {
-      if (storage[i] == value) {
-        return i - first + 2;
-      }
-    }
-
-    return -1;
-  }
-
   @Override
   public SSymbol getSelector() {
     return SymbolTable.symbolFor("indexOf:");

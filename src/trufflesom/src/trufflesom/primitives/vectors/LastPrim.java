@@ -38,13 +38,4 @@ public abstract class LastPrim extends UnaryExpressionNode {
     }
   }
 
-  @Specialization(guards = "receiver.isBooleanType()")
-  public static final Object doBooleanSVector(final SVector receiver) {
-    if (receiver.getSize() > 0) {
-      return receiver.getBooleanStorage()[receiver.getLastIndex() - 2];
-    } else {
-      return Nil.nilObject;
-    }
-  }
-
 }
