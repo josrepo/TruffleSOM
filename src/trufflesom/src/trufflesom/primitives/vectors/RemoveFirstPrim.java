@@ -13,6 +13,17 @@ import trufflesom.vmobjects.SVector;
 @Primitive(className = "Vector", primitive = "removeFirst", selector = "removeFirst", receiverType = SVector.class, inParser = false)
 public abstract class RemoveFirstPrim extends UnaryExpressionNode {
 
+  @Specialization(guards = "receiver.isEmptyType()")
+  public final Object doEmptySVector(final VirtualFrame frame, final SVector receiver) {
+    if (receiver.getSize() > 0) {
+      receiver.incrementFirstIndex();
+      return Nil.nilObject;
+    } else {
+      return makeGenericSend(SymbolTable.symbolFor("error:"))
+          .doPreEvaluated(frame, new Object[] {receiver, "Vector: Attempting to remove the first element from an empty Vector"});
+    }
+  }
+
   @Specialization(guards = "receiver.isObjectType()")
   public final Object doObjectSVector(final VirtualFrame frame, final SVector receiver) {
     if (receiver.getSize() > 0) {
