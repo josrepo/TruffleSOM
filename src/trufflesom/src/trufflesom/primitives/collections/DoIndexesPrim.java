@@ -55,7 +55,7 @@ public abstract class DoIndexesPrim extends BinaryMsgExprNode {
   @Specialization
   public final SVector doSVector(final VirtualFrame frame,
       final SVector receiver, final SBlock b) {
-    int l = receiver.getSize();
+    int l = receiver.getSize() + 1;
     try {
       if (1 < l) {
         this.block.executeEvaluated(frame, b, (long) 1);
