@@ -9,6 +9,8 @@ import trufflesom.vm.constants.Nil;
 import trufflesom.vmobjects.SSymbol;
 import trufflesom.vmobjects.SVector;
 
+import java.util.Arrays;
+
 @GenerateNodeFactory
 @Primitive(className = "Vector", primitive = "append:", selector = "append:", inParser = false, receiverType = SVector.class)
 public abstract class AppendPrim extends BinaryMsgExprNode {
@@ -42,6 +44,7 @@ public abstract class AppendPrim extends BinaryMsgExprNode {
     }
 
     long[] newStorage = new long[capacity];
+    Arrays.fill(newStorage, SVector.EMPTY_LONG_SLOT);
     receiver.setStorage(newStorage);
 
     newStorage[receiver.getLastIndex() - 1] = value;
@@ -59,6 +62,7 @@ public abstract class AppendPrim extends BinaryMsgExprNode {
     }
 
     double[] newStorage = new double[capacity];
+    Arrays.fill(newStorage, SVector.EMPTY_DOUBLE_SLOT);
     receiver.setStorage(newStorage);
 
     newStorage[receiver.getLastIndex() - 1] = value;
@@ -143,7 +147,10 @@ public abstract class AppendPrim extends BinaryMsgExprNode {
       newStorage = new Object[storage.length];
     }
 
-    System.arraycopy(storage, 0, newStorage, 0, storage.length);
+    for (int i = 0; i < storage.length; i++) {
+      newStorage[i] = storage[i] == SVector.EMPTY_LONG_SLOT ? null : storage[i];
+    }
+
     receiver.setStorage(newStorage);
     newStorage[receiver.getLastIndex() - 1] = value;
     receiver.incrementLastIndex();
@@ -179,7 +186,10 @@ public abstract class AppendPrim extends BinaryMsgExprNode {
       newStorage = new Object[storage.length];
     }
 
-    System.arraycopy(storage, 0, newStorage, 0, storage.length);
+    for (int i = 0; i < storage.length; i++) {
+      newStorage[i] = storage[i] == SVector.EMPTY_DOUBLE_SLOT ? null : storage[i];
+    }
+
     receiver.setStorage(newStorage);
     newStorage[receiver.getLastIndex() - 1] = value;
     receiver.incrementLastIndex();
