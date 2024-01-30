@@ -47,6 +47,10 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
         !(value instanceof Boolean);
   }
 
+  protected static final boolean valueNotLongDouble(final Object value) {
+    return !(value instanceof Long) && !(value instanceof Double);
+  }
+
   @Specialization(guards = {"receiver.isEmptyType()"})
   public static final long doEmptySArray(final SArray receiver, final long index,
       final long value) {
@@ -229,12 +233,131 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
     return transitionAndSet(receiver, index, value, newStorage);
   }
 
+  @Specialization(guards = "receiver.isEmptyType()")
+  public final Object doEmptySVector(final VirtualFrame frame, final SVector receiver, final long index,
+      final long value) {
+    final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      long[] newStorage = new long[receiver.getEmptyStorage()];
+      Arrays.fill(newStorage, SVector.EMPTY_LONG_SLOT);
+      receiver.setStorage(newStorage);
+      newStorage[storeIdx - 1] = value;
+      return value;
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
+  }
+
+  @Specialization(guards = "receiver.isEmptyType()")
+  public final Object doEmptySVector(final VirtualFrame frame, final SVector receiver, final long index,
+      final double value) {
+    final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      double[] newStorage = new double[receiver.getEmptyStorage()];
+      Arrays.fill(newStorage, SVector.EMPTY_DOUBLE_SLOT);
+      receiver.setStorage(newStorage);
+      newStorage[storeIdx - 1] = value;
+      return value;
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
+  }
+
+  @Specialization(guards = {"receiver.isEmptyType()", "valueIsNotNil(value)", "valueNotLongDouble(value)"})
+  public final Object doEmptySVector(final VirtualFrame frame, final SVector receiver, final long index,
+      final Object value) {
+    final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      Object[] newStorage = new Object[receiver.getEmptyStorage()];
+      receiver.setStorage(newStorage);
+      newStorage[storeIdx - 1] = value;
+      return value;
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
+  }
+
+  @Specialization(guards = {"receiver.isEmptyType()", "valueIsNil(value)"})
+  public final Object doEmptySVectorWithNil(final VirtualFrame frame, final SVector receiver, final long index,
+      final Object value) {
+    final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      return value;
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
+  }
+
   @Specialization(guards = "receiver.isObjectType()")
   public final Object doObjectSVector(final VirtualFrame frame, final SVector receiver, final long index,
       final Object value) {
     final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       receiver.getObjectStorage()[storeIdx - 1] = value;
+      return value;
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
+  }
+
+  @Specialization(guards = "receiver.isLongType()")
+  public final Object doLongSVector(final VirtualFrame frame, final SVector receiver, final long index,
+      final long value) {
+    final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      receiver.getLongStorage()[storeIdx - 1] = value;
+      return value;
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
+  }
+
+  @Specialization(guards = {"receiver.isLongType()", "valueIsNotLong(value)"})
+  public final Object doLongSVector(final VirtualFrame frame, final SVector receiver, final long index,
+      final Object value) {
+    final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      final long[] storage = receiver.getLongStorage();
+      Object[] newStorage = new Object[storage.length];
+
+      for (int i = 0; i < storage.length; i++) {
+        newStorage[i] = storage[i] == SVector.EMPTY_LONG_SLOT ? Nil.nilObject : storage[i];
+      }
+
+      receiver.setStorage(newStorage);
+      newStorage[storeIdx - 1] = value;
+      return value;
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
+  }
+
+  @Specialization(guards = "receiver.isDoubleType()")
+  public final Object doDoubleSVector(final VirtualFrame frame, final SVector receiver, final long index,
+      final double value) {
+    final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      receiver.getDoubleStorage()[storeIdx - 1] = value;
+      return value;
+    } else {
+      return doInvalidIndexError(frame, receiver, storeIdx);
+    }
+  }
+
+  @Specialization(guards = {"receiver.isDoubleType()", "valueIsNotDouble(value)"})
+  public final Object doDoubleSVector(final VirtualFrame frame, final SVector receiver, final long index,
+      final Object value) {
+    final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
+    if (indexValid(receiver, storeIdx)) {
+      final double[] storage = receiver.getDoubleStorage();
+      Object[] newStorage = new Object[storage.length];
+
+      for (int i = 0; i < storage.length; i++) {
+        newStorage[i] = storage[i] == SVector.EMPTY_LONG_SLOT ? Nil.nilObject : storage[i];
+      }
+
+      receiver.setStorage(newStorage);
+      newStorage[storeIdx - 1] = value;
       return value;
     } else {
       return doInvalidIndexError(frame, receiver, storeIdx);
