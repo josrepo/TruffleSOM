@@ -153,10 +153,68 @@ public abstract class DoPrim extends BinaryMsgExprNode {
     return arr;
   }
 
+  @Specialization(guards = "vec.isEmptyType()")
+  public final SVector doEmptySVector(final VirtualFrame frame, final SVector vec, final SBlock b) {
+    int first = vec.getFirstIndex() - 1;
+    int last = vec.getLastIndex() - 1;
+    try {
+      if (first < last) {
+        this.block.executeEvaluated(frame, b, Nil.nilObject);
+      }
+      for (long i = first + 1; i < last; i++) {
+        this.block.executeEvaluated(frame, b, Nil.nilObject);
+      }
+    } finally {
+      if (CompilerDirectives.inInterpreter()) {
+        reportLoopCount(last);
+      }
+    }
+    return vec;
+  }
+
   @Specialization(guards = "vec.isObjectType()")
-  public final SVector doObjectSVector(final VirtualFrame frame,
-      final SVector vec, final SBlock b) {
+  public final SVector doObjectSVector(final VirtualFrame frame, final SVector vec, final SBlock b) {
     Object[] storage = vec.getObjectStorage();
+    int first = vec.getFirstIndex() - 1;
+    int last = vec.getLastIndex() - 1;
+    try {
+      if (first < last) {
+        this.block.executeEvaluated(frame, b, storage[first]);
+      }
+      for (long i = first + 1; i < last; i++) {
+        this.block.executeEvaluated(frame, b, storage[(int) i]);
+      }
+    } finally {
+      if (CompilerDirectives.inInterpreter()) {
+        reportLoopCount(last);
+      }
+    }
+    return vec;
+  }
+
+  @Specialization(guards = "vec.isLongType()")
+  public final SVector doLongSVector(final VirtualFrame frame, final SVector vec, final SBlock b) {
+    long[] storage = vec.getLongStorage();
+    int first = vec.getFirstIndex() - 1;
+    int last = vec.getLastIndex() - 1;
+    try {
+      if (first < last) {
+        this.block.executeEvaluated(frame, b, storage[first]);
+      }
+      for (long i = first + 1; i < last; i++) {
+        this.block.executeEvaluated(frame, b, storage[(int) i]);
+      }
+    } finally {
+      if (CompilerDirectives.inInterpreter()) {
+        reportLoopCount(last);
+      }
+    }
+    return vec;
+  }
+
+  @Specialization(guards = "vec.isDoubleType()")
+  public final SVector doDoubleSVector(final VirtualFrame frame, final SVector vec, final SBlock b) {
+    double[] storage = vec.getDoubleStorage();
     int first = vec.getFirstIndex() - 1;
     int last = vec.getLastIndex() - 1;
     try {
