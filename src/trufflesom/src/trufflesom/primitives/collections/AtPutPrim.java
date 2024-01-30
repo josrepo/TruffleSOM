@@ -247,7 +247,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
 
   private Object doInvalidIndexError(final VirtualFrame frame, final SVector receiver, final int index) {
     return makeGenericSend(SymbolTable.symbolFor("error:")).doPreEvaluated(frame, new Object[]{receiver,
-            "Vector[" + receiver.getFirstIndex() + ".." + receiver.getLastIndex() + "]: Index " + index + " out of bounds"});
+        "Vector[" + receiver.getFirstIndex() + ".." + receiver.getLastIndex() + "]: Index " + index + " out of bounds"});
   }
 
   private static Object transitionAndSet(final SArray receiver, final long index,
