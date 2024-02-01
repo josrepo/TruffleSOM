@@ -59,7 +59,7 @@ public abstract class IndexOfPrim extends BinaryMsgExprNode {
   public final long doObjectSVector(final VirtualFrame frame, final SVector receiver, final Object value) {
     final Object[] storage = receiver.getObjectStorage();
     int first = receiver.getFirstIndex();
-    int last = receiver.getLastIndex() - 2;
+    int last = receiver.getLastIndex() - 1;
 
     for (int i = first - 1; i < last; i++) {
       if (this.equals.executeEvaluated(frame, storage[i], value).equals(true)) {
@@ -75,7 +75,7 @@ public abstract class IndexOfPrim extends BinaryMsgExprNode {
   public final long doLongSVector(final VirtualFrame frame, final SVector receiver, final long value) {
     final long[] storage = receiver.getLongStorage();
     int first = receiver.getFirstIndex();
-    int last = receiver.getLastIndex() - 2;
+    int last = receiver.getLastIndex() - 1;
 
     for (int i = first - 1; i < last; i++) {
       if (storage[i] == value) {
@@ -97,7 +97,7 @@ public abstract class IndexOfPrim extends BinaryMsgExprNode {
   public final long doDoubleSVector(final VirtualFrame frame, final SVector receiver, final double value) {
     final double[] storage = receiver.getDoubleStorage();
     int first = receiver.getFirstIndex();
-    int last = receiver.getLastIndex() - 2;
+    int last = receiver.getLastIndex() - 1;
 
     for (int i = first - 1; i < last; i++) {
       if (storage[i] == value) {
