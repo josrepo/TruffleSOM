@@ -27,6 +27,14 @@ public abstract class IndexOfPrim extends BinaryMsgExprNode {
     return value != Nil.nilObject;
   }
 
+  protected static final boolean valueIsNotLong(final Object value) {
+    return !(value instanceof Long);
+  }
+
+  protected static final boolean valueIsNotDouble(final Object value) {
+    return !(value instanceof Double);
+  }
+
   @Override
   @SuppressWarnings("unchecked")
   public <T extends Node> T initialize(final long coord) {
@@ -51,7 +59,7 @@ public abstract class IndexOfPrim extends BinaryMsgExprNode {
   public final long doObjectSVector(final VirtualFrame frame, final SVector receiver, final Object value) {
     final Object[] storage = receiver.getObjectStorage();
     int first = receiver.getFirstIndex();
-    int last = receiver.getLastIndex() - 1;
+    int last = receiver.getLastIndex() - 2;
 
     for (int i = first - 1; i < last; i++) {
       if (this.equals.executeEvaluated(frame, storage[i], value).equals(true)) {
@@ -67,7 +75,7 @@ public abstract class IndexOfPrim extends BinaryMsgExprNode {
   public final long doLongSVector(final VirtualFrame frame, final SVector receiver, final long value) {
     final long[] storage = receiver.getLongStorage();
     int first = receiver.getFirstIndex();
-    int last = receiver.getLastIndex() - 1;
+    int last = receiver.getLastIndex() - 2;
 
     for (int i = first - 1; i < last; i++) {
       if (storage[i] == value) {
@@ -78,12 +86,18 @@ public abstract class IndexOfPrim extends BinaryMsgExprNode {
     return -1;
   }
 
+  @Specialization(guards = {"receiver.isLongType()", "valueIsNotLong(value)"})
+  @SuppressWarnings("unused")
+  public final long doLongSVector(final VirtualFrame frame, final SVector receiver, final Object value) {
+    return -1;
+  }
+
   @Specialization(guards = "receiver.isDoubleType()")
   @SuppressWarnings("unused")
   public final long doDoubleSVector(final VirtualFrame frame, final SVector receiver, final double value) {
     final double[] storage = receiver.getDoubleStorage();
     int first = receiver.getFirstIndex();
-    int last = receiver.getLastIndex() - 1;
+    int last = receiver.getLastIndex() - 2;
 
     for (int i = first - 1; i < last; i++) {
       if (storage[i] == value) {
@@ -91,6 +105,12 @@ public abstract class IndexOfPrim extends BinaryMsgExprNode {
       }
     }
 
+    return -1;
+  }
+
+  @Specialization(guards = {"receiver.isDoubleType()", "valueIsNotDouble(value)"})
+  @SuppressWarnings("unused")
+  public final long doDoubleSVector(final VirtualFrame frame, final SVector receiver, final Object value) {
     return -1;
   }
 

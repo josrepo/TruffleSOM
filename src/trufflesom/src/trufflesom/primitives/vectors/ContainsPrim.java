@@ -29,6 +29,14 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
     return value != Nil.nilObject;
   }
 
+  protected static final boolean valueIsNotLong(final Object value) {
+    return !(value instanceof Long);
+  }
+
+  protected static final boolean valueIsNotDouble(final Object value) {
+    return !(value instanceof Double);
+  }
+
   @Override
   @SuppressWarnings("unchecked")
   public <T extends Node> T initialize(final long coord) {
@@ -78,6 +86,12 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
     return false;
   }
 
+  @Specialization(guards = {"receiver.isLongType()", "valueIsNotLong(value)"})
+  @SuppressWarnings("unused")
+  public final boolean doLongSVector(final VirtualFrame frame, final SVector receiver, final Object value) {
+    return false;
+  }
+
   @Specialization(guards = "receiver.isDoubleType()")
   @SuppressWarnings("unused")
   public final boolean doDoubleSVector(final VirtualFrame frame, final SVector receiver, final double value) {
@@ -90,6 +104,12 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
       }
     }
 
+    return false;
+  }
+
+  @Specialization(guards = {"receiver.isDoubleType()", "valueIsNotDouble(value)"})
+  @SuppressWarnings("unused")
+  public final boolean doDoubleSVector(final VirtualFrame frame, final SVector receiver, final Object value) {
     return false;
   }
 
