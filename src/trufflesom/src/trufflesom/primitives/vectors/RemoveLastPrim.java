@@ -20,7 +20,7 @@ public abstract class RemoveLastPrim extends UnaryExpressionNode {
       return Nil.nilObject;
     } else {
       return makeGenericSend(SymbolTable.symbolFor("error:"))
-          .doPreEvaluated(frame, new Object[] {receiver, "Vector: Attempting to remove the first element from an empty Vector"});
+          .doPreEvaluated(frame, new Object[] {receiver, "Vector: Attempting to remove the last element from an empty Vector"});
     }
   }
 
