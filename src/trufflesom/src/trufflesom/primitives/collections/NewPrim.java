@@ -11,8 +11,10 @@ import trufflesom.interpreter.nodes.ExpressionNode;
 import trufflesom.interpreter.nodes.nary.BinaryMsgExprNode;
 import trufflesom.vm.Classes;
 import trufflesom.vm.SymbolTable;
+import trufflesom.vm.constants.Nil;
 import trufflesom.vmobjects.SArray;
 import trufflesom.vmobjects.SClass;
+import trufflesom.vmobjects.SObject;
 import trufflesom.vmobjects.SSymbol;
 import trufflesom.vmobjects.SVector;
 
@@ -59,10 +61,29 @@ public abstract class NewPrim extends BinaryMsgExprNode {
     return new SVector(length);
   }
 
-  @Specialization
+  @Specialization(guards = "isVectorSubclass(receiver)")
   public static final SVector doSClassSVectorSubclass(final SClass receiver,
       final long length) {
     return new SVector(receiver, length);
+  }
+
+  @SuppressWarnings("unused")
+  public static boolean isVectorSubclass(final SClass receiver) {
+    final SObject superClass = (receiver).getSuperClass();
+    if (superClass == Nil.nilObject) {
+      return false;
+    }
+
+    return superClass == Classes.vectorClass || isVectorSubclass(superClass);
+  }
+
+  private static boolean isVectorSubclass(final SObject receiver) {
+    final SObject superClass = ((SClass) receiver).getSuperClass();
+    if (superClass == Nil.nilObject) {
+      return false;
+    }
+
+    return superClass == Classes.vectorClass || isVectorSubclass(superClass);
   }
 
   @Override
