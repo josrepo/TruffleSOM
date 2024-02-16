@@ -275,6 +275,10 @@ public final class SClass extends SObject {
     return layoutForInstances;
   }
 
+  public void setLayoutForInstances(final ObjectLayout layoutForInstances) {
+    this.layoutForInstances = layoutForInstances;
+  }
+
   @Override
   public String toString() {
     return "Class(" + getName().getString() + ")";

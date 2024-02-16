@@ -63,6 +63,19 @@ public final class ObjectLayout {
     objectStorageLocationsUsed = nextFreeObjIdx;
   }
 
+  public ObjectLayout(final Class<?>[] knownFieldTypes, final StorageLocation[] storageLocations,
+      final int primitiveStorageLocationsUsed, final int objectStorageLocationsUsed, final SClass forClass) {
+    CompilerAsserts.neverPartOfCompilation("Layouts should not be created in compiled code");
+
+    this.forClass = forClass;
+    this.latestLayoutForClass = Truffle.getRuntime().createAssumption();
+    this.storageTypes = knownFieldTypes;
+    this.totalNumberOfStorageLocations = knownFieldTypes.length;
+    this.storageLocations = storageLocations;
+    this.primitiveStorageLocationsUsed = primitiveStorageLocationsUsed;
+    this.objectStorageLocationsUsed = objectStorageLocationsUsed;
+  }
+
   public boolean isValid() {
     return latestLayoutForClass.isValid();
   }

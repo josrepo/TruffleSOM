@@ -71,6 +71,7 @@ import trufflesom.vmobjects.SClass;
 import trufflesom.vmobjects.SInvokable;
 import trufflesom.vmobjects.SObject;
 import trufflesom.vmobjects.SSymbol;
+import trufflesom.vmobjects.SVector;
 
 
 public final class Universe {
@@ -358,6 +359,9 @@ public final class Universe {
     loadSystemClass(booleanClass);
     loadSystemClass(trueClass);
     loadSystemClass(falseClass);
+
+    // Load custom layout for vector
+    SVector.setSVectorObjectLayout(vectorClass);
 
     // Load the generic block class
     blockClasses[0] = loadClass(symbolFor("Block"));

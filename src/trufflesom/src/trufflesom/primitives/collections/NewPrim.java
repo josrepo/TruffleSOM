@@ -59,6 +59,12 @@ public abstract class NewPrim extends BinaryMsgExprNode {
     return new SVector(length);
   }
 
+  @Specialization
+  public static final SVector doSClassSVectorSubclass(final SClass receiver,
+      final long length) {
+    return new SVector(receiver, length);
+  }
+
   @Override
   public SSymbol getSelector() {
     return SymbolTable.symNewMsg;
