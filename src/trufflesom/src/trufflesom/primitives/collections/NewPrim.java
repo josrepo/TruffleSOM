@@ -27,6 +27,7 @@ import trufflesom.vmobjects.SVector;
 @Primitive(selector = "new:", inParser = false)
 public abstract class NewPrim extends BinaryMsgExprNode {
 
+  @SuppressWarnings("unused")
   protected static final int LIMIT = 3;
 
   public static class IsArrayClass extends Specializer<ExpressionNode, SSymbol> {
@@ -63,17 +64,12 @@ public abstract class NewPrim extends BinaryMsgExprNode {
     return new SVector(length);
   }
 
-//  @Specialization(guards = "isVectorSubclass(receiver)")
-//  public static final SVector doSClassSVectorSubclass(final SClass receiver, final long length) {
-//    return new SVector(receiver, length);
-//  } // 0.4 - 0.43 seconds
-
   @Specialization(guards = {"receiver == cachedReceiver", "isSubclass"}, limit = "LIMIT")
-  public static final SVector doCachedSClassSVectorSubclass(final SClass receiver, final long length,
-      @Cached("isVectorSubclass(receiver)") @SuppressWarnings("unused") final boolean isSubclass,
-      @Cached("receiver") @SuppressWarnings("unused") final SClass cachedReceiver) {
-    return new SVector(receiver, length);
-  }  // 0.43 - 0.47 seconds
+  public static final SVector doCachedSClassSVectorSubclass(@SuppressWarnings("unused") final SClass receiver,
+      final long length, @Cached("isVectorSubclass(receiver)") @SuppressWarnings("unused") final boolean isSubclass,
+      @Cached("receiver") final SClass cachedReceiver) {
+    return new SVector(cachedReceiver, length);
+  }
 
   @Specialization(replaces = "doCachedSClassSVectorSubclass", guards = "isVectorSubclass(receiver)")
   public static final SVector doUncachedSClassSVectorSubclass(final SClass receiver, final long length) {

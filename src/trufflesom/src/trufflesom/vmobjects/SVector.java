@@ -275,12 +275,15 @@ public class SVector extends SObject {
 
   public static ObjectLayout setSVectorObjectLayout(final SClass clazz) {
     final ObjectLayout currentLayout = clazz.getLayoutForInstances();
-    if (currentLayout.getStorageLocation(0) instanceof FirstStorageLocation
-        && currentLayout.getStorageLocation(1) instanceof LastStorageLocation
-        && currentLayout.getStorageLocation(2) instanceof StorageStorageLocation) {
+    if (currentLayout.hasPatchedStorageLocation()) {
       return clazz.getLayoutForInstances();
     }
 
+    return createSVectorObjectLayout(clazz);
+  }
+
+  @CompilerDirectives.TruffleBoundary
+  private static ObjectLayout createSVectorObjectLayout(final SClass clazz) {
     final Class<?>[] knownFieldTypes = new Class<?>[3];
     knownFieldTypes[0] = Long.class;
     knownFieldTypes[1] = Long.class;

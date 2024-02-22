@@ -20,6 +20,7 @@ public final class ObjectLayout {
 
   private final StorageLocation[] storageLocations;
   private final Class<?>[]        storageTypes;
+  private final boolean patchedStorageLocation;
 
   public ObjectLayout(final int numberOfFields, final SClass forClass) {
     this(new Class<?>[numberOfFields], forClass);
@@ -61,6 +62,7 @@ public final class ObjectLayout {
 
     primitiveStorageLocationsUsed = nextFreePrimIdx;
     objectStorageLocationsUsed = nextFreeObjIdx;
+    patchedStorageLocation = false;
   }
 
   public ObjectLayout(final Class<?>[] knownFieldTypes, final StorageLocation[] storageLocations,
@@ -74,6 +76,7 @@ public final class ObjectLayout {
     this.storageLocations = storageLocations;
     this.primitiveStorageLocationsUsed = primitiveStorageLocationsUsed;
     this.objectStorageLocationsUsed = objectStorageLocationsUsed;
+    this.patchedStorageLocation = true;
   }
 
   public boolean isValid() {
@@ -167,5 +170,9 @@ public final class ObjectLayout {
       return 0;
     }
     return requiredExtensionFields;
+  }
+
+  public boolean hasPatchedStorageLocation() {
+    return patchedStorageLocation;
   }
 }
