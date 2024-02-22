@@ -1,5 +1,7 @@
 package trufflesom.primitives.collections;
 
+import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.dsl.Cached;
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.ImportStatic;
 import com.oracle.truffle.api.dsl.NodeFactory;
@@ -24,6 +26,8 @@ import trufflesom.vmobjects.SVector;
 @Primitive(className = "Vector", primitive = "new:", classSide = true, specializer = NewPrim.IsVectorClass.class)
 @Primitive(selector = "new:", inParser = false)
 public abstract class NewPrim extends BinaryMsgExprNode {
+
+  protected static final int LIMIT = 3;
 
   public static class IsArrayClass extends Specializer<ExpressionNode, SSymbol> {
 
@@ -50,40 +54,41 @@ public abstract class NewPrim extends BinaryMsgExprNode {
   }
 
   @Specialization(guards = "receiver == arrayClass")
-  public static final SArray doSClassSArray(@SuppressWarnings("unused") final SClass receiver,
-      final long length) {
+  public static final SArray doSClassSArray(@SuppressWarnings("unused") final SClass receiver, final long length) {
     return new SArray(length);
   }
 
   @Specialization(guards = "receiver == vectorClass")
-  public static final SVector doSClassSVector(@SuppressWarnings("unused") final SClass receiver,
-      final long length) {
+  public static final SVector doSClassSVector(@SuppressWarnings("unused") final SClass receiver, final long length) {
     return new SVector(length);
   }
 
-  @Specialization(guards = "isVectorSubclass(receiver)")
-  public static final SVector doSClassSVectorSubclass(final SClass receiver,
-      final long length) {
+//  @Specialization(guards = "isVectorSubclass(receiver)")
+//  public static final SVector doSClassSVectorSubclass(final SClass receiver, final long length) {
+//    return new SVector(receiver, length);
+//  } // 0.4 - 0.43 seconds
+
+  @Specialization(guards = {"receiver == cachedReceiver", "isSubclass"}, limit = "LIMIT")
+  public static final SVector doCachedSClassSVectorSubclass(final SClass receiver, final long length,
+      @Cached("isVectorSubclass(receiver)") @SuppressWarnings("unused") final boolean isSubclass,
+      @Cached("receiver") @SuppressWarnings("unused") final SClass cachedReceiver) {
+    return new SVector(receiver, length);
+  }  // 0.43 - 0.47 seconds
+
+  @Specialization(replaces = "doCachedSClassSVectorSubclass", guards = "isVectorSubclass(receiver)")
+  public static final SVector doUncachedSClassSVectorSubclass(final SClass receiver, final long length) {
     return new SVector(receiver, length);
   }
 
   @SuppressWarnings("unused")
+  @CompilerDirectives.TruffleBoundary
   public static boolean isVectorSubclass(final SClass receiver) {
     final SObject superClass = (receiver).getSuperClass();
     if (superClass == Nil.nilObject) {
       return false;
     }
 
-    return superClass == Classes.vectorClass || isVectorSubclass(superClass);
-  }
-
-  private static boolean isVectorSubclass(final SObject receiver) {
-    final SObject superClass = ((SClass) receiver).getSuperClass();
-    if (superClass == Nil.nilObject) {
-      return false;
-    }
-
-    return superClass == Classes.vectorClass || isVectorSubclass(superClass);
+    return superClass == Classes.vectorClass || isVectorSubclass((SClass) superClass);
   }
 
   @Override
