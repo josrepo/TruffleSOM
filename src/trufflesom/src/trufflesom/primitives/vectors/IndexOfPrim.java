@@ -62,7 +62,7 @@ public abstract class IndexOfPrim extends BinaryMsgExprNode {
     int last = receiver.getLastIndex() - 1;
 
     for (int i = first - 1; i < last; i++) {
-      if (this.equals.executeEvaluated(frame, storage[i], value).equals(true)) {
+      if (this.equals.executeEvaluatedBoolean(frame, storage[i], value)) {
         return i - first + 2;
       }
     }

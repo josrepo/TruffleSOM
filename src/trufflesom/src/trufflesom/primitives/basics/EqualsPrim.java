@@ -6,6 +6,7 @@ import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
 import trufflesom.bdt.primitives.Primitive;
 import trufflesom.interpreter.nodes.nary.BinaryMsgExprNode;
 import trufflesom.vm.SymbolTable;
@@ -23,6 +24,8 @@ public abstract class EqualsPrim extends BinaryMsgExprNode {
   public SSymbol getSelector() {
     return SymbolTable.symbolFor("=");
   }
+
+  public abstract boolean executeEvaluatedBoolean(VirtualFrame frame, Object receiver, Object argument);
 
   @Specialization
   public static final boolean doBoolean(final boolean left, final boolean right) {
