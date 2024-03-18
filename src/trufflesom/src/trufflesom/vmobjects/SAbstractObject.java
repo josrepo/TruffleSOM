@@ -52,6 +52,13 @@ public abstract class SAbstractObject implements TruffleObject {
     return send("escapedBlock:", arguments);
   }
 
+  @TruffleBoundary
+  @InliningCutoff
+  public static final Object sendError(final Object receiver, final Object arg) {
+    Object[] arguments = {receiver, arg};
+    return send("error:", arguments);
+  }
+
   @SuppressWarnings("static-method")
   @ExportMessage
   public final boolean isNull() {

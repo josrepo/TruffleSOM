@@ -7,6 +7,7 @@ import trufflesom.bdt.primitives.Primitive;
 import trufflesom.interpreter.nodes.nary.UnaryExpressionNode;
 import trufflesom.vm.SymbolTable;
 import trufflesom.vm.constants.Nil;
+import trufflesom.vmobjects.SAbstractObject;
 import trufflesom.vmobjects.SVector;
 
 @GenerateNodeFactory
@@ -19,8 +20,7 @@ public abstract class RemoveLastPrim extends UnaryExpressionNode {
       receiver.decrementLastIndex();
       return Nil.nilObject;
     } else {
-      return makeGenericSend(SymbolTable.symbolFor("error:"))
-          .doPreEvaluated(frame, new Object[] {receiver, "Vector: Attempting to remove the last element from an empty Vector"});
+      return SAbstractObject.sendError(receiver, "Vector: Attempting to remove the last element from an empty Vector");
     }
   }
 
@@ -34,8 +34,7 @@ public abstract class RemoveLastPrim extends UnaryExpressionNode {
       storage[last] = Nil.nilObject;
       return value == null ? Nil.nilObject : value;
     } else {
-      return makeGenericSend(SymbolTable.symbolFor("error:"))
-          .doPreEvaluated(frame, new Object[] {receiver, "Vector: Attempting to remove the last element from an empty Vector"});
+      return SAbstractObject.sendError(receiver,"Vector: Attempting to remove the last element from an empty Vector");
     }
   }
 
@@ -49,8 +48,7 @@ public abstract class RemoveLastPrim extends UnaryExpressionNode {
       storage[last] = SVector.EMPTY_LONG_SLOT;
       return value == SVector.EMPTY_LONG_SLOT ? Nil.nilObject : value;
     } else {
-      return makeGenericSend(SymbolTable.symbolFor("error:"))
-          .doPreEvaluated(frame, new Object[] {receiver, "Vector: Attempting to remove the last element from an empty Vector"});
+      return SAbstractObject.sendError(receiver, "Vector: Attempting to remove the last element from an empty Vector");
     }
   }
 
@@ -64,8 +62,7 @@ public abstract class RemoveLastPrim extends UnaryExpressionNode {
       storage[last] = SVector.EMPTY_DOUBLE_SLOT;
       return value == SVector.EMPTY_DOUBLE_SLOT ? Nil.nilObject : value;
     } else {
-      return makeGenericSend(SymbolTable.symbolFor("error:"))
-          .doPreEvaluated(frame, new Object[] {receiver, "Vector: Attempting to remove the last element from an empty Vector"});
+      return SAbstractObject.sendError(receiver,"Vector: Attempting to remove the last element from an empty Vector");
     }
   }
 

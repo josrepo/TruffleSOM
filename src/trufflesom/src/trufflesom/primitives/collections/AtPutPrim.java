@@ -2,14 +2,16 @@ package trufflesom.primitives.collections;
 
 import java.util.Arrays;
 
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+import com.oracle.truffle.api.HostCompilerDirectives.InliningCutoff;
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 import trufflesom.bdt.primitives.Primitive;
 import trufflesom.interpreter.nodes.nary.TernaryExpressionNode;
-import trufflesom.vm.SymbolTable;
 import trufflesom.vm.constants.Nil;
+import trufflesom.vmobjects.SAbstractObject;
 import trufflesom.vmobjects.SArray;
 import trufflesom.vmobjects.SArray.PartiallyEmptyArray;
 import trufflesom.vmobjects.SVector;
@@ -244,7 +246,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       newStorage[storeIdx - 1] = value;
       return value;
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -259,7 +261,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       newStorage[storeIdx - 1] = value;
       return value;
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -273,7 +275,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       newStorage[storeIdx - 1] = value;
       return value;
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -284,7 +286,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
     if (indexValid(receiver, storeIdx)) {
       return value;
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -296,7 +298,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       receiver.getObjectStorage()[storeIdx - 1] = value;
       return value;
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -308,7 +310,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       receiver.getLongStorage()[storeIdx - 1] = value;
       return value;
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -328,7 +330,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       newStorage[storeIdx - 1] = value;
       return value;
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -340,7 +342,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       receiver.getDoubleStorage()[storeIdx - 1] = value;
       return value;
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -360,7 +362,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       newStorage[storeIdx - 1] = value;
       return value;
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -368,9 +370,11 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
     return vector.getFirstIndex() <= index && index < vector.getLastIndex();
   }
 
-  private Object doInvalidIndexError(final VirtualFrame frame, final SVector receiver, final int index) {
-    return makeGenericSend(SymbolTable.symbolFor("error:")).doPreEvaluated(frame, new Object[]{receiver,
-        "Vector[" + receiver.getFirstIndex() + ".." + receiver.getLastIndex() + "]: Index " + index + " out of bounds"});
+  @TruffleBoundary
+  @InliningCutoff
+  private Object doInvalidIndexError(final SVector receiver, final int index) {
+    return SAbstractObject.sendError(receiver,
+                    "Vector[" + receiver.getFirstIndex() + ".." + receiver.getLastIndex() + "]: Index " + index + " out of bounds");
   }
 
   private static Object transitionAndSet(final SArray receiver, final long index,

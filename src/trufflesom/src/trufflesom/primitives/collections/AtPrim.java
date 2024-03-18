@@ -1,5 +1,7 @@
 package trufflesom.primitives.collections;
 
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+import com.oracle.truffle.api.HostCompilerDirectives.InliningCutoff;
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
 
@@ -9,6 +11,7 @@ import trufflesom.interpreter.nodes.GenericMessageSendNode;
 import trufflesom.interpreter.nodes.nary.BinaryMsgExprNode;
 import trufflesom.vm.SymbolTable;
 import trufflesom.vm.constants.Nil;
+import trufflesom.vmobjects.SAbstractObject;
 import trufflesom.vmobjects.SArray;
 import trufflesom.vmobjects.SSymbol;
 import trufflesom.vmobjects.SVector;
@@ -56,7 +59,7 @@ public abstract class AtPrim extends BinaryMsgExprNode {
     if (indexValid(receiver, storeIdx)) {
       return Nil.nilObject;
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -66,7 +69,7 @@ public abstract class AtPrim extends BinaryMsgExprNode {
     if (indexValid(receiver, storeIdx)) {
       return receiver.getObjectStorage()[storeIdx - 1];
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -76,7 +79,7 @@ public abstract class AtPrim extends BinaryMsgExprNode {
     if (indexValid(receiver, storeIdx)) {
       return receiver.getLongStorage()[storeIdx - 1];
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -86,7 +89,7 @@ public abstract class AtPrim extends BinaryMsgExprNode {
     if (indexValid(receiver, storeIdx)) {
       return receiver.getDoubleStorage()[storeIdx - 1];
     } else {
-      return doInvalidIndexError(frame, receiver, storeIdx);
+      return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
@@ -94,9 +97,10 @@ public abstract class AtPrim extends BinaryMsgExprNode {
     return vector.getFirstIndex() <= index && index < vector.getLastIndex();
   }
 
-  private Object doInvalidIndexError(final VirtualFrame frame, final SVector receiver, final int index) {
-    return makeGenericSend(SymbolTable.symbolFor("error:")).doPreEvaluated(frame, new Object[]{receiver,
-        "Vector[" + receiver.getFirstIndex() + ".." + receiver.getLastIndex() + "]: Index " + index + " out of bounds"});
+  @TruffleBoundary
+  @InliningCutoff
+  private Object doInvalidIndexError(final SVector receiver, final int index) {
+    return SAbstractObject.sendError(receiver,
+        "Vector[" + receiver.getFirstIndex() + ".." + receiver.getLastIndex() + "]: Index " + index + " out of bounds");
   }
-
 }
