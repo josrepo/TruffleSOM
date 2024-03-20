@@ -5,11 +5,9 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node;
 import trufflesom.bdt.primitives.Primitive;
+import trufflesom.interpreter.nodes.ExpressionNode;
 import trufflesom.interpreter.nodes.nary.BinaryMsgExprNode;
-import trufflesom.primitives.basics.BlockPrimsFactory;
-import trufflesom.primitives.basics.EqualsPrim;
 import trufflesom.primitives.basics.EqualsPrimFactory;
-import trufflesom.primitives.basics.LengthPrimFactory;
 import trufflesom.vm.SymbolTable;
 import trufflesom.vm.constants.Nil;
 import trufflesom.vmobjects.SSymbol;
@@ -19,7 +17,7 @@ import trufflesom.vmobjects.SVector;
 @Primitive(className = "Vector", primitive = "contains:", selector = "contains:", receiverType = SVector.class, inParser = false)
 public abstract class ContainsPrim extends BinaryMsgExprNode {
 
-  @Child private EqualsPrim equals;
+  @Child private ExpressionNode equals;
 
   protected static final boolean valueIsNil(final Object value) {
     return value == Nil.nilObject;
@@ -42,6 +40,7 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
   public <T extends Node> T initialize(final long coord) {
     super.initialize(coord);
     equals = EqualsPrimFactory.create(null, null);
+    equals.initialize(coord);
     return (T) this;
   }
 
@@ -63,7 +62,7 @@ public abstract class ContainsPrim extends BinaryMsgExprNode {
     int last = receiver.getLastIndex() - 1;
 
     for (int i = receiver.getFirstIndex() - 1; i < last; i++) {
-      if (this.equals.executeEvaluatedBoolean(frame, storage[i], value)) {
+      if ((boolean) this.equals.doPreEvaluated(frame, new Object[]{storage[i], value})) {
         return true;
       }
     }

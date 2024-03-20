@@ -5,8 +5,8 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node;
 import trufflesom.bdt.primitives.Primitive;
+import trufflesom.interpreter.nodes.ExpressionNode;
 import trufflesom.interpreter.nodes.nary.BinaryMsgExprNode;
-import trufflesom.primitives.basics.EqualsEqualsPrim;
 import trufflesom.primitives.basics.EqualsEqualsPrimFactory;
 import trufflesom.vm.SymbolTable;
 import trufflesom.vm.constants.Nil;
@@ -17,7 +17,7 @@ import trufflesom.vmobjects.SVector;
 @Primitive(className = "Vector", primitive = "remove:", selector = "remove:", receiverType = SVector.class, inParser = false)
 public abstract class RemoveObjectPrim extends BinaryMsgExprNode {
 
-  @Child private EqualsEqualsPrim equalsEquals;
+  @Child private ExpressionNode equalsEquals;
 
   protected static final boolean valueIsNil(final Object value) {
     return value == Nil.nilObject;
@@ -32,6 +32,7 @@ public abstract class RemoveObjectPrim extends BinaryMsgExprNode {
   public <T extends Node> T initialize(final long coord) {
     super.initialize(coord);
     equalsEquals = EqualsEqualsPrimFactory.create(null, null);
+    equalsEquals.initialize(coord);
     return (T) this;
   }
 
@@ -59,7 +60,7 @@ public abstract class RemoveObjectPrim extends BinaryMsgExprNode {
     boolean found = false;
 
     for (int i = receiver.getFirstIndex() - 1; i < last; i++) {
-      if (this.equalsEquals.executeEvaluated(frame, storage[i], value).equals(true)) {
+      if ((boolean) this.equalsEquals.doPreEvaluated(frame, new Object[]{storage[i], value})) {
         found = true;
       } else {
         newStorage[i] = storage[i];
