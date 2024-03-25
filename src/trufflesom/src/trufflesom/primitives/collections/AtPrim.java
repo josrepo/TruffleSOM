@@ -2,10 +2,13 @@ package trufflesom.primitives.collections;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.HostCompilerDirectives.InliningCutoff;
+import com.oracle.truffle.api.dsl.Cached;
+import com.oracle.truffle.api.dsl.Cached.Shared;
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.profiles.InlinedBranchProfile;
 import trufflesom.bdt.primitives.Primitive;
 import trufflesom.interpreter.nodes.GenericMessageSendNode;
 import trufflesom.interpreter.nodes.nary.BinaryMsgExprNode;
@@ -54,41 +57,45 @@ public abstract class AtPrim extends BinaryMsgExprNode {
   }
 
   @Specialization(guards = "receiver.isEmptyType()")
-  public final Object doEmptySVector(final VirtualFrame frame, final SVector receiver, final long idx) {
+  public final Object doEmptySVector(final VirtualFrame frame, final SVector receiver, final long idx, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       return Nil.nilObject;
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
   @Specialization(guards = "receiver.isObjectType()")
-  public final Object doObjectSVector(final VirtualFrame frame, final SVector receiver, final long idx) {
+  public final Object doObjectSVector(final VirtualFrame frame, final SVector receiver, final long idx, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       return receiver.getObjectStorage()[storeIdx - 1];
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
   @Specialization(guards = "receiver.isLongType()")
-  public final Object doLongSVector(final VirtualFrame frame, final SVector receiver, final long idx) {
+  public final Object doLongSVector(final VirtualFrame frame, final SVector receiver, final long idx, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       return receiver.getLongStorage()[storeIdx - 1];
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
   @Specialization(guards = "receiver.isDoubleType()")
-  public final Object doDoubleSVector(final VirtualFrame frame, final SVector receiver, final long idx) {
+  public final Object doDoubleSVector(final VirtualFrame frame, final SVector receiver, final long idx, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) idx + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       return receiver.getDoubleStorage()[storeIdx - 1];
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }

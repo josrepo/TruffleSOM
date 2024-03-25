@@ -4,10 +4,13 @@ import java.util.Arrays;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.HostCompilerDirectives.InliningCutoff;
+import com.oracle.truffle.api.dsl.Cached;
+import com.oracle.truffle.api.dsl.Cached.Shared;
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.profiles.InlinedBranchProfile;
 import trufflesom.bdt.primitives.Primitive;
 import trufflesom.interpreter.nodes.nary.TernaryExpressionNode;
 import trufflesom.vm.constants.Nil;
@@ -237,7 +240,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
 
   @Specialization(guards = "receiver.isEmptyType()")
   public final Object doEmptySVector(final VirtualFrame frame, final SVector receiver, final long index,
-      final long value) {
+      final long value, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       long[] newStorage = new long[receiver.getEmptyStorage()];
@@ -246,13 +249,14 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       newStorage[storeIdx - 1] = value;
       return value;
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
   @Specialization(guards = "receiver.isEmptyType()")
   public final Object doEmptySVector(final VirtualFrame frame, final SVector receiver, final long index,
-      final double value) {
+      final double value, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       double[] newStorage = new double[receiver.getEmptyStorage()];
@@ -261,13 +265,14 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       newStorage[storeIdx - 1] = value;
       return value;
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
   @Specialization(guards = {"receiver.isEmptyType()", "valueIsNotNil(value)", "valueNotLongDouble(value)"})
   public final Object doEmptySVector(final VirtualFrame frame, final SVector receiver, final long index,
-      final Object value) {
+      final Object value, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       Object[] newStorage = new Object[receiver.getEmptyStorage()];
@@ -275,48 +280,52 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       newStorage[storeIdx - 1] = value;
       return value;
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
   @Specialization(guards = {"receiver.isEmptyType()", "valueIsNil(value)"})
   public final Object doEmptySVectorWithNil(final VirtualFrame frame, final SVector receiver, final long index,
-      final Object value) {
+      final Object value, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       return value;
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
   @Specialization(guards = "receiver.isObjectType()")
   public final Object doObjectSVector(final VirtualFrame frame, final SVector receiver, final long index,
-      final Object value) {
+      final Object value, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       receiver.getObjectStorage()[storeIdx - 1] = value;
       return value;
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
   @Specialization(guards = "receiver.isLongType()")
   public final Object doLongSVector(final VirtualFrame frame, final SVector receiver, final long index,
-      final long value) {
+      final long value, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       receiver.getLongStorage()[storeIdx - 1] = value;
       return value;
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
   @Specialization(guards = {"receiver.isLongType()", "valueIsNotLong(value)"})
   public final Object doLongSVector(final VirtualFrame frame, final SVector receiver, final long index,
-      final Object value) {
+      final Object value, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       final long[] storage = receiver.getLongStorage();
@@ -330,25 +339,27 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       newStorage[storeIdx - 1] = value;
       return value;
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
   @Specialization(guards = "receiver.isDoubleType()")
   public final Object doDoubleSVector(final VirtualFrame frame, final SVector receiver, final long index,
-      final double value) {
+      final double value, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       receiver.getDoubleStorage()[storeIdx - 1] = value;
       return value;
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
 
   @Specialization(guards = {"receiver.isDoubleType()", "valueIsNotDouble(value)"})
   public final Object doDoubleSVector(final VirtualFrame frame, final SVector receiver, final long index,
-      final Object value) {
+      final Object value, @Shared("invIdx") @Cached InlinedBranchProfile invalidIdx) {
     final int storeIdx = (int) index + receiver.getFirstIndex() - 1;
     if (indexValid(receiver, storeIdx)) {
       final double[] storage = receiver.getDoubleStorage();
@@ -362,6 +373,7 @@ public abstract class AtPutPrim extends TernaryExpressionNode {
       newStorage[storeIdx - 1] = value;
       return value;
     } else {
+      invalidIdx.enter(this);
       return doInvalidIndexError(receiver, storeIdx);
     }
   }
