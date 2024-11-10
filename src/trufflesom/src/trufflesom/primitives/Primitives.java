@@ -100,11 +100,6 @@ import trufflesom.primitives.basics.StringPrimsFactory;
 import trufflesom.primitives.basics.SystemPrimsFactory;
 import trufflesom.primitives.basics.UnequalUnequalPrimFactory;
 import trufflesom.primitives.basics.UnequalsPrimFactory;
-import trufflesom.primitives.collections.AtPrimFactory;
-import trufflesom.primitives.collections.AtPutPrimFactory;
-import trufflesom.primitives.collections.DoIndexesPrimFactory;
-import trufflesom.primitives.collections.DoPrimFactory;
-import trufflesom.primitives.collections.NewPrimFactory;
 import trufflesom.primitives.reflection.ClassPrimsFactory;
 import trufflesom.primitives.reflection.GlobalPrimFactory;
 import trufflesom.primitives.reflection.HasGlobalPrimFactory;
@@ -290,11 +285,19 @@ public final class Primitives extends PrimitiveLoader<ExpressionNode, SSymbol> {
     add(allFactories, NewObjectPrimFactory.getInstance());
     add(allFactories, UnequalsPrimFactory.getInstance());
 
-    add(allFactories, AtPrimFactory.getInstance());
-    add(allFactories, AtPutPrimFactory.getInstance());
-    add(allFactories, DoIndexesPrimFactory.getInstance());
-    add(allFactories, DoPrimFactory.getInstance());
-    add(allFactories, NewPrimFactory.getInstance());
+    if (Universe.installVector) {
+      add(allFactories, trufflesom.primitives.collections.AtPrimFactory.getInstance());
+      add(allFactories, trufflesom.primitives.collections.AtPutPrimFactory.getInstance());
+      add(allFactories, trufflesom.primitives.collections.DoIndexesPrimFactory.getInstance());
+      add(allFactories, trufflesom.primitives.collections.DoPrimFactory.getInstance());
+      add(allFactories, trufflesom.primitives.collections.NewPrimFactory.getInstance());
+    } else {
+      add(allFactories, trufflesom.primitives.arrays.AtPrimFactory.getInstance());
+      add(allFactories, trufflesom.primitives.arrays.AtPutPrimFactory.getInstance());
+      add(allFactories, trufflesom.primitives.arrays.DoIndexesPrimFactory.getInstance());
+      add(allFactories, trufflesom.primitives.arrays.DoPrimFactory.getInstance());
+      add(allFactories, trufflesom.primitives.arrays.NewPrimFactory.getInstance());
+    }
 
     add(allFactories, AndMessageNodeFactory.getInstance());
     add(allFactories, AndBoolMessageNodeFactory.getInstance());
@@ -314,18 +317,20 @@ public final class Primitives extends PrimitiveLoader<ExpressionNode, SSymbol> {
     add(allFactories, PerformWithArgumentsInSuperclassPrimFactory.getInstance());
     add(allFactories, PerformWithArgumentsPrimFactory.getInstance());
 
-    add(allFactories, AppendPrimFactory.getInstance());
-    add(allFactories, AsArrayPrimFactory.getInstance());
-    add(allFactories, CapacityPrimFactory.getInstance());
-    add(allFactories, ContainsPrimFactory.getInstance());
-    add(allFactories, FirstPrimFactory.getInstance());
-    add(allFactories, IndexOfPrimFactory.getInstance());
-    add(allFactories, IsEmptyPrimFactory.getInstance());
-    add(allFactories, RemoveFirstPrimFactory.getInstance());
-    add(allFactories, RemoveLastPrimFactory.getInstance());
-    add(allFactories, RemoveObjectPrimFactory.getInstance());
-    add(allFactories, LastPrimFactory.getInstance());
-    add(allFactories, SizePrimFactory.getInstance());
+    if (Universe.installVector) {
+      add(allFactories, AppendPrimFactory.getInstance());
+      add(allFactories, AsArrayPrimFactory.getInstance());
+      add(allFactories, CapacityPrimFactory.getInstance());
+      add(allFactories, ContainsPrimFactory.getInstance());
+      add(allFactories, FirstPrimFactory.getInstance());
+      add(allFactories, IndexOfPrimFactory.getInstance());
+      add(allFactories, IsEmptyPrimFactory.getInstance());
+      add(allFactories, RemoveFirstPrimFactory.getInstance());
+      add(allFactories, RemoveLastPrimFactory.getInstance());
+      add(allFactories, RemoveObjectPrimFactory.getInstance());
+      add(allFactories, LastPrimFactory.getInstance());
+      add(allFactories, SizePrimFactory.getInstance());
+    }
 
     add(allFactories, WhileTruePrimitiveNodeFactory.getInstance());
     add(allFactories, WhileFalsePrimitiveNodeFactory.getInstance());

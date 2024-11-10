@@ -41,7 +41,11 @@ public class Classes {
     nilClass = newSystemClass();
     classClass = newSystemClass();
     arrayClass = newSystemClass();
-    vectorClass = newSystemClass();
+    if (Universe.installVector) {
+      vectorClass = newSystemClass();
+    } else {
+      vectorClass = null;
+    }
     symbolClass = newSystemClass();
     methodClass = newSystemClass();
     integerClass = newSystemClass();
@@ -92,7 +96,9 @@ public class Classes {
     nilClass.resetSystemClass();
     classClass.resetSystemClass();
     arrayClass.resetSystemClass();
-    vectorClass.resetSystemClass();
+    if (Universe.installVector) {
+      vectorClass.resetSystemClass();
+    }
     symbolClass.resetSystemClass();
     methodClass.resetSystemClass();
     integerClass.resetSystemClass();

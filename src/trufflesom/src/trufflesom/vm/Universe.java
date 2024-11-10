@@ -100,6 +100,8 @@ public final class Universe {
   @CompilationFinal private static SObject systemObject;
   @CompilationFinal private static SClass  systemClass;
 
+  public static final boolean installVector = true;
+
   public static void setSourceCompiler(final SourcecodeCompiler compiler,
       final boolean needsToSucceed) {
     // this will cause headaches when we need to debug this
@@ -331,7 +333,9 @@ public final class Universe {
     initializeSystemClass(metaclassClass, classClass, "Metaclass");
     initializeSystemClass(nilClass, objectClass, "Nil");
     initializeSystemClass(arrayClass, objectClass, "Array");
-    initializeSystemClass(vectorClass, objectClass, "Vector");
+    if (installVector) {
+      initializeSystemClass(vectorClass, objectClass, "Vector");
+    }
     initializeSystemClass(methodClass, objectClass, "Method");
     initializeSystemClass(stringClass, objectClass, "String");
     initializeSystemClass(symbolClass, stringClass, "Symbol");
@@ -349,7 +353,9 @@ public final class Universe {
     loadSystemClass(metaclassClass);
     loadSystemClass(nilClass);
     loadSystemClass(arrayClass);
-    loadSystemClass(vectorClass);
+    if (installVector) {
+      loadSystemClass(vectorClass);
+    }
     loadSystemClass(methodClass);
     loadSystemClass(stringClass);
     loadSystemClass(symbolClass);
@@ -361,7 +367,9 @@ public final class Universe {
     loadSystemClass(falseClass);
 
     // Load custom layout for vector
-    SVector.setSVectorObjectLayout(vectorClass);
+    if (installVector) {
+      SVector.setSVectorObjectLayout(vectorClass);
+    }
 
     // Load the generic block class
     blockClasses[0] = loadClass(symbolFor("Block"));
